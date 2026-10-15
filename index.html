@@ -397,7 +397,7 @@ details ol{margin:9px 0 0 20px;color:var(--dim);font-size:12.5px;line-height:1.8
 "use strict";
 /* 智能控制管理中心（供热子驾驶舱 · 独立页试运行）
    口径：运营日 09:00 起算；5 段；半小时节拍；全额结转；只读文字建议 */
-var VERSION = 'v0.12.9-20261015-1516';
+var VERSION = 'v0.13.0-20261015-1618';
 // ===== Excel 真实回放数据（2025-12-24 运营日 09:00 起，老大提供 44h 模拟台账） =====
 // 24 个整点逐时外温（09:00~次日08:00）
 var REPLAY_HOURLY = [-7,-5.3,-2.2,2.6,3.2,0.4,0.8,1,0.5,-0.4,-1.1,-1.6,-2.6,-3.1,-4.8,-5.5,-6,-6.4,-6.6,-6.8,-8,-8.5,-8.6,-9];
@@ -744,6 +744,22 @@ async function procGet(qs){
   if(!r.ok) throw new Error('HTTP '+r.status);
   return await r.json();
 }
+// —— 平台内嵌取数（供热舱第3tab同源 iframe）——
+// 从 URL ?project_id= 识别平台项目；token 存在平台前端 localStorage，同源页面可直接读
+function getToken(){ try{ return localStorage.getItem('token')||''; }catch(e){ return ''; } }
+function apiHeaders(){
+  var t=getToken();
+  return { 'Content-Type':'application/json', 'Authorization': t?('Bearer '+t):'' };
+}
+async function apiGet(url){  // 平台相对路径接口，返回 data 或 null
+  try{
+    var r=await fetch(url,{ headers:apiHeaders(), cache:'no-store' });
+    if(!r.ok) return null;
+    var j=await r.json();
+    return (j && j.code===0)? j.data : null;
+  }catch(e){ return null; }
+}
+var URL_PROJECT_ID = null;   // 供热舱平台内嵌时传入的项目ID，脚本开头解析
 async function fetchReal(D0, endT){
   var v = CFG.vars, res = { meter:null, tboiler:null, flow:null, tout:null, err:[] };
   var f0 = new Date(D0.getTime()-3600000), f1 = new Date(endT.getTime()+60000);
@@ -2014,15 +2030,41 @@ async function refresh(){
 
 (function init(){
   document.getElementById('daySel').value = ymd(curWorkDayStart());
+  // 解析平台项目ID：供热舱第3tab内嵌 ?project_id=XX 时走平台配置优先
+  try{
+    var _sp=new URLSearchParams(location.search);
+    URL_PROJECT_ID = _sp.get('project_id') ? parseInt(_sp.get('project_id'),10) : null;
+  }catch(e){ URL_PROJECT_ID = null; }
+  // 本地默认配置铺底（测试工作站/未上传平台的兜底）
   CFG = loadCfg('test');
   document.getElementById('serverSel').value = CFG.server;
   document.getElementById('winSel').value = CFG.winMode;
   document.getElementById('projInput').value = CFG.project;
   bindUI();
-  if(!window.echarts){
-    var t = setInterval(function(){ if(window.echarts){ clearInterval(t); refresh(); } }, 400);
+  function readyThenRefresh(){
+    if(!window.echarts){
+      var t = setInterval(function(){ if(window.echarts){ clearInterval(t); refresh(); } }, 400);
+    } else { refresh(); }
   }
-  refresh();
+  if(URL_PROJECT_ID){
+    // 平台内嵌模式：优先从平台拉该项目智能寻优配置报文，未上传则回退本地
+    apiGet('/api/smart-opt-configs?project_id='+encodeURIComponent(URL_PROJECT_ID)).then(function(d){
+      if(d && d.json_data){
+        var pc=null;
+        try{ pc = (typeof d.json_data==='string')? JSON.parse(d.json_data) : d.json_data; }catch(e){ pc=null; }
+        if(pc && typeof pc==='object' && !Array.isArray(pc)){
+          CFG = mergeCfg(defCfg(), pc);   // 平台报文为唯一权威（合并到默认骨架），覆盖本地
+          document.getElementById('serverSel').value = CFG.server;
+          document.getElementById('winSel').value = CFG.winMode;
+          document.getElementById('projInput').value = CFG.project;
+          saveCfg();
+        }
+      }
+      readyThenRefresh();
+    });
+  } else {
+    readyThenRefresh();
+  }
 })();
 </script>
 </body>
