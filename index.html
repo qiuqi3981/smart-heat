@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>智能控制管理中心 —— 拓能科慧·低碳</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050a10;--bg2:#0a131c;--card:rgba(255,255,255,.035);--line:rgba(255,255,255,.09);
+  --txt:#dbe7f2;--dim:#8fa4b8;--dim2:#6b8098;--brand:#00A29A;--warn:#f5a623;--hot:#ff6b6b;
+  --bar-under:#4a90e2;--bar-over:#fd9644;--need:#00A29A;--want:#f5a623;
+}
+html,body{background:
+  radial-gradient(1200px 600px at 12% -8%,rgba(0,162,154,.14),transparent 60%),
+  radial-gradient(900px 500px at 88% 0%,rgba(74,144,226,.10),transparent 60%),
+  linear-gradient(180deg,var(--bg),#04070b 70%);min-height:100%;color:var(--txt);
+  font:13px/1.55 -apple-system,"PingFang SC","Microsoft YaHei",Inter,Arial,sans-serif}
+body{padding-bottom:26px}
+a{color:var(--brand);text-decoration:none}
+.wrap{max-width:1720px;margin:0 auto;padding:0 16px}
+.top{position:sticky;top:0;z-index:30;backdrop-filter:blur(14px);
+  background:linear-gradient(180deg,rgba(5,10,16,.94),rgba(5,10,16,.76));border-bottom:1px solid var(--line)}
+.top .in{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 16px;max-width:1720px;margin:0 auto}
+.brand{display:flex;align-items:baseline;gap:9px;padding-right:6px}
+.brand b{font-size:19px;letter-spacing:.5px;color:#eaf5ff}
+.brand i{font-style:normal;font-size:12px;color:var(--dim2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--brand);box-shadow:0 0 10px var(--brand);display:inline-block}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
+.fld{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+.fld label{color:var(--dim2);font-size:11px;white-space:nowrap}
+select,input[type=text],input[type=number],input[type=date],textarea{
+  background:transparent;border:0;color:var(--txt);font:inherit;outline:none;min-width:64px}
+select option{background:#0d1822}
+textarea{border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%;resize:vertical;background:rgba(0,0,0,.25)}
+input[type=text],input[type=number],input[type=date]{border-bottom:1px dashed rgba(255,255,255,.16)}
+.btn{border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--txt);border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit;transition:.15s}
+.btn:hover{background:rgba(0,162,154,.16);border-color:rgba(0,162,154,.5)}
+.btn.pri{background:linear-gradient(135deg,rgba(0,162,154,.95),rgba(0,162,154,.72));border-color:transparent;color:#03110f;font-weight:600}
+.btn.sm{padding:3px 9px;font-size:12px}
+.tag{font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid var(--line);color:var(--dim)}
+.tag.mock{color:#ffd479;border-color:rgba(245,166,35,.45);background:rgba(245,166,35,.10)}
+.tag.real{color:#8ff0e8;border-color:rgba(0,162,154,.45);background:rgba(0,162,154,.12)}
+.tag.ro{color:#9fd0ff;border-color:rgba(74,144,226,.4);background:rgba(74,144,226,.10)}
+.tag.err{color:#ffb0b0;border-color:rgba(255,107,107,.45);background:rgba(255,107,107,.12)}
+main{padding-top:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;margin-bottom:13px;box-shadow:0 10px 30px rgba(0,0,0,.22)}
+.ch{display:flex;align-items:center;gap:9px;margin-bottom:10px;flex-wrap:wrap}
+.ch h3{font-size:14px;font-weight:600;color:#e9f4ff;letter-spacing:.3px}
+.ch .sub{color:var(--dim2);font-size:11.5px}
+.ch .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.hint{color:var(--dim2);font-size:11.5px}
+.params{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:9px}
+.p{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 10px}
+.p .k{color:var(--dim2);font-size:11.5px;display:flex;gap:5px;align-items:center}
+.p .v{font-size:17px;font-weight:600;color:#eaf6ff;margin-top:2px;font-variant-numeric:tabular-nums}
+.p .v small{font-size:11.5px;color:var(--dim);font-weight:400;margin-left:3px}
+.p.hot .v{color:#ffb3b3}
+.p.ok .v{color:#7fe6dd}
+.p.warnb .v{color:#ffd479}
+.p .bd{font-size:9px;font-weight:500;line-height:1;padding:2px 5px;border-radius:4px;white-space:nowrap}
+.p .bd.yesterday{background:rgba(53,68,91,.5);color:#c8d6e5}
+.p .bd.realtime{background:rgba(26,135,84,.25);color:#26de81}
+.p .bd.current{background:rgba(74,144,226,.2);color:#4a90e2}
+.p .bd.now{background:rgba(255,165,66,.2);color:#f5a623}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.row3{display:grid;grid-template-columns:1.25fr 1fr;gap:13px}
+@media(max-width:1180px){.row2,.row3{grid-template-columns:1fr}}
+#mainChart{height:392px;width:100%}
+#scChart,#scChart2{height:262px;width:100%}
+.core{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin-bottom:11px}
+.advice{border-radius:10px;padding:11px 13px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.advice .hd{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.advice .hd b{font-size:14px}
+.advice .txt{font-size:14.5px;line-height:1.7}
+.advice.under{border-color:rgba(74,144,226,.45);background:linear-gradient(135deg,rgba(74,144,226,.12),rgba(74,144,226,.03))}
+.advice.over{border-color:rgba(253,150,68,.45);background:linear-gradient(135deg,rgba(253,150,68,.12),rgba(253,150,68,.03))}
+.advice.keep{border-color:rgba(0,162,154,.45);background:linear-gradient(135deg,rgba(0,162,154,.12),rgba(0,162,154,.03))}
+.advice ul{margin:7px 0 0 17px;color:var(--dim)}
+.advice li{margin:2px 0}
+.tw{overflow:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,.06)}
+th{position:sticky;top:0;background:#0b141d;color:var(--dim);font-weight:500;z-index:1}
+th:first-child,td:first-child{text-align:left}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+tr.cur td{background:rgba(0,162,154,.09)}
+tr.done td:first-child{border-left:3px solid rgba(0,162,154,.55)}
+tr.wait{opacity:.55}
+.pos{color:#ffb98a}.neg{color:#8fc3ff}
+#ledgerBox{max-height:352px}
+details{border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:rgba(255,255,255,.02)}
+details summary{cursor:pointer;color:var(--dim);font-size:12.5px}
+details ol{margin:9px 0 0 20px;color:var(--dim);font-size:12.5px;line-height:1.85}
+.mask{position:fixed;inset:0;background:rgba(2,6,10,.72);backdrop-filter:blur(3px);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:34px 16px;overflow:auto}
+.mask.hidden{display:none}
+.dlg{width:min(1040px,100%);background:linear-gradient(180deg,#0b141d,#08111a);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.6);overflow:hidden}
+.dlg .dh{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.dlg .dh b{font-size:15px}
+.dlg .dt{display:flex;gap:6px;padding:10px 16px 0;flex-wrap:wrap}
+.tab{padding:6px 14px;border-radius:8px;border:1px solid var(--line);color:var(--dim);cursor:pointer;font-size:12.5px}
+.tab.on{color:#03110f;background:linear-gradient(135deg,rgba(0,162,154,.95),rgba(0,162,154,.7));border-color:transparent;font-weight:600}
+.dlg .db{padding:14px 16px;max-height:64vh;overflow:auto}
+.dlg .df{display:flex;gap:9px;align-items:center;padding:11px 16px;border-top:1px solid var(--line);background:rgba(0,0,0,.2);flex-wrap:wrap}
+.gridc{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:11px}
+.fi{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.fi .k{color:var(--dim2);font-size:11.5px;display:block;margin-bottom:3px}
+.fi input,.fi select{width:100%;border-bottom:1px dashed rgba(255,255,255,.16);padding:3px 0}
+.sec{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:11px;background:rgba(255,255,255,.02)}
+.sec>.st{font-size:12.5px;color:#bfe9e4;margin-bottom:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tblmini{width:100%;font-size:12.5px}
+.glossary{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.glossary .gitem{background:rgba(0,162,154,.06);border:1px solid rgba(0,162,154,.22);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.55;color:var(--text)}
+.glossary .gitem b{color:#00A29A;font-weight:600;display:block;margin-bottom:2px}
+.glossary table.kT{width:100%;margin-top:2px;font-size:12px}
+.glossary table.kT th,.glossary table.kT td{border:1px solid rgba(0,162,154,.25);padding:3px 8px;text-align:center}
+.glossary table.kT th{background:rgba(0,162,154,.1);font-weight:600}
+.tblmini td,.tblmini th{padding:5px 6px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}
+.tblmini input{width:100%;border-bottom:1px dashed rgba(255,255,255,.15);padding:2px 0}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:#9fe8df}
+.res{font-size:11.5px;color:var(--dim2)}
+.bad{color:#ffb0b0}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--dim2);font-size:11.5px;align-items:center}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.foot{color:var(--dim2);font-size:11.5px;text-align:center;padding:8px 0 0}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="in">
+    <div class="brand"><span class="dot"></span><b>智能控制管理中心</b><i>供热 · 时段滚动需热调控指导</i></div>
+    <span class="tag ro">只读建议 · 不自动下发</span>
+    <span id="srcTag" class="tag mock">模拟数据</span>
+    <span id="verTag" class="tag">v0.1.0</span>
+    <div class="tools">
+      <div class="fld"><label>项目</label><input id="projInput" type="text" style="width:110px"/></div>
+      <div class="fld"><label>数据源</label>
+        <select id="serverSel"><option value="test">测试服务器</option><option value="prod">生成服务器</option></select>
+      </div>
+      <div class="fld"><label>运营日</label><input id="daySel" type="date"/></div>
+      <div class="fld"><label>窗口</label>
+        <select id="winSel">
+          <option value="slim">极简模式（前1后1）</option>
+          <option value="std">标准模式（前2后2）</option>
+          <option value="long">长模式（前4后4）</option>
+        </select>
+      </div>
+      <button class="btn sm" id="btnMock">模拟数据：开</button>
+      <button class="btn sm" id="btnReplay">真实回放：关</button>
+      <button class="btn sm" id="btnWalk">走查模式：关</button>
+      <button class="btn sm" id="btnRefresh">刷新</button>
+      <button class="btn sm pri" id="btnCfg">配置</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+<main>
+  <section class="card"><div class="ch"><h3>运行参数</h3><span class="sub" id="paramSub"></span>
+    <div class="right"><span class="hint" id="lastUpd"></span></div></div>
+    <div class="params" id="paramBox"></div>
+  </section>
+
+  <section class="card walkbox hidden" id="walkPanel">
+    <div class="ch"><h3>走查模式 · 表底手动录入</h3>
+      <span class="sub">从运营日 09:00 起，每半小时录一个表底数，页面实时结算实际供热与建议；当前时刻 <b id="walkClock">—</b></span></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px">
+      <span>当前应录时刻 <b id="walkSlot" class="code">—</b></span>
+      <input id="walkInp" type="number" step="0.001" placeholder="输入此刻表底读数 (kWh)" style="width:220px" />
+      <button class="btn sm pri" id="btnWalkGo">录入并推进半小时</button>
+      <button class="btn sm" id="btnWalkBack">回退半小时</button>
+      <button class="btn sm" id="btnWalkReset">重置</button>
+      <span class="hint" id="walkHint">表底读数为热量表累计值，相邻两次差 = 该半小时供热量</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="ch"><h3>实际供热量 vs 需热量 · 时段滚动长图</h3>
+      <span class="sub">柱=每半小时实际供热（超供/欠供两色）　线=24 小时需热　粗线=本时段剩余需求水平线</span>
+      <div class="right legend">
+        <span><i style="background:var(--bar-under)"></i>欠供</span>
+        <span><i style="background:var(--bar-over)"></i>超供</span>
+        <span><i style="background:var(--need)"></i>时段需热功率（绿线）</span>
+        <span><i style="background:var(--want)"></i>当前需热功率（黄线）</span>
+      </div>
+    </div>
+    <div id="mainChart"></div>
+    <div class="hint" id="chartHint" style="margin-top:6px"></div>
+  </section>
+
+  <section class="card">
+    <div class="ch"><h3>本时段核心对比与调节指导</h3><span class="sub" id="segSub"></span>
+      <div class="right"><span class="tag ro">策略仅文字建议</span></div></div>
+    <div class="core" id="coreBox"></div>
+    <div id="adviceBox"></div>
+  </section>
+
+  <div class="row3">
+    <section class="card"><div class="ch"><h3>昨日能耗结算（完整运营日）</h3><span class="sub">上一个个运营日 09:00–次日09:00 已全部结算</span></div>
+      <div class="core" id="settleBox"></div>
+      <div class="hint" id="settleHint"></div>
+    </section>
+    <section class="card"><div class="ch"><h3>功率离散分析（季末找质/量调节分界）</h3><span class="sub">逐半小时点，双图并排</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <div class="ch"><h4 style="font-size:13px;color:#bfe9e4;margin:0">实际功率 ↔ 炉水温度</h4></div>
+          <div id="scChart"></div>
+          <div class="hint">炉水温度限值 92℃ 仅作采集与预警；完整跑一个采暖季后再定高低负荷分界线。</div>
+        </div>
+        <div>
+          <div class="ch"><h4 style="font-size:13px;color:#bfe9e4;margin:0">实际功率 ↔ 循环水量</h4></div>
+          <div id="scChart2"></div>
+          <div class="hint">季末找量调节分界：多少流量对应多大负荷。</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="card"><div class="ch"><h3>预报外温（本次预测）</h3><span class="sub" id="wxSub">未拉取</span>
+      <div class="right"><span class="tag real">时段边界更新</span></div></div>
+    <div id="wxChart" style="height:220px"></div>
+    <div class="hint">配置页「时段与天气」填天气接口地址后自动拉取；每时段结算完成时更新一次，图上标注本次拉取时间。折线=本次拉取的未来24小时逐时预报外温。</div>
+  </section>
+
+  <section class="card"><div class="ch"><h3>逐时段结算表</h3><span class="sub">一天 5 段，段末欠供/超供全额结转下一段</span>
+      <div class="right"><span class="hint">结转口径：欠供为正，超供为负</span></div></div>
+    <div class="tw"><table id="segTable"></table></div>
+  </section>
+
+  <section class="card"><div class="ch"><h3>运行参数台账（每半小时一条）</h3><span class="sub">5 分钟上报只用于取差与取样</span>
+      <div class="right"><button class="btn sm" id="btnCsv">导出 CSV</button></div></div>
+    <div class="tw" id="ledgerBox"><table id="ledgerTable"></table></div>
+  </section>
+
+  <details>
+    <summary>口径说明（点开）</summary>
+    <ol>
+      <li><b>运营日</b>：当天 09:00 到次日 09:00 记为一个运营日，共 24 小时；每 24 小时累计清零，进入新的循环指导。</li>
+      <li><b>时段</b>：一天分 5 段 —— S1 09:00–13:00、S2 13:00–17:00、S3 17:00–21:00、S4 21:00–01:00、S5 01:00–09:00（S5 为次日凌晨）。</li>
+      <li><b>需热公式</b>：面积 × 单位热指标 ×（室内基准温度 − 外温）÷ 基准温差 ÷ 1000 = 需热功率 kW；热指标对应基准温差（默认 20K），乘小时数即需热量 kWh。</li>
+      <li><b>外温口径</b>：全部使用预报外温 —— 运营日 09:00 拉取的 24 小时逐时预报一次定死为当日基准；每 3 小时取一次新预报，仅用于补充跨日段（S5）。实测外温只记不算，季末做预报误差对照。</li>
+      <li><b>节拍</b>：整页半小时算一次；5 分钟上报的热量表只用于该半小时首尾读数取差；半小时台账一条。</li>
+      <li><b>实际供热量</b>：热量表累计表底（kWh）半小时首尾差值；换算功率 = 差值 ÷ 0.5h。</li>
+      <li><b>调节判据</b>：剩余应供 = 本段需热 + 上段结转 − 本段已供；需求功率 = 剩余应供 ÷ 本段剩余小时；与前半小时实际功率比，落在死区（默认 ±5%）维持，欠供/超供给出方向与建议幅度；单次修正限幅（默认 ±15%）。</li>
+      <li><b>结转</b>：本段未供完或超出的热量全额滚入下一段；S1 起结转为零（09:00 清零）。</li>
+      <li><b>控制方式</b>：低负荷走质调节（调锅炉出水温度），高负荷走量调节（调循环水泵变频流量）；分界点需实跑一个采暖季，用「实际功率 ↔ 炉水温度」散点确定。本期不设负荷率、不画设计负荷线。</li>
+      <li><b>窗口</b>：极简/标准/长模式只决定长图看多远（前1后1 / 前2后2 / 前4后4 段），不参与任何结算；长模式跨日，台账长期保留。</li>
+      <li><b>输出边界</b>：页面只输出文字策略建议，不向锅炉、水泵下发任何指令；未来自动链接出水温度与水泵变频后，仍保留人工确认。</li>
+      <li><b>数据源与配置</b>：测试服务器 / 生成服务器两套数据源，配置按数据源分别保存、可导出 JSON 备份。</li>
+    </ol>
+  </details>
+
+  <div class="foot">智能控制管理中心 · 供热子驾驶舱（独立页试运行） · 版本 <span id="footVer"></span> · 配置驱动 · 只读建议</div>
+</main>
+</div>
+
+<div class="mask hidden" id="cfgMask">
+  <div class="dlg">
+    <div class="dh"><b>智能控制管理中心 · 配置</b>
+      <span class="tag" id="cfgSrcTag"></span>
+      <div class="right" style="margin-left:auto"><button class="btn sm" id="btnCloseCfg">关闭</button></div>
+    </div>
+    <div class="dt">
+      <div class="tab on" data-tab="0">① 基本信息</div>
+      <div class="tab" data-tab="1">② 负荷与控制</div>
+      <div class="tab" data-tab="2">③ 时段与天气</div>
+      <div class="tab" data-tab="3">④ 数据绑定</div>
+      <div class="tab" data-tab="4">⑤ 公式</div>
+    </div>
+    <div class="db">
+      <div class="pg" data-pg="0">
+        <div class="sec"><div class="st">基本信息</div>
+          <div class="gridc">
+            <div class="fi"><span class="k">项目名称</span><input id="cfProj" type="text"/></div>
+            <div class="fi"><span class="k">数据源</span>
+              <select id="cfServer"><option value="test">测试服务器</option><option value="prod">生成服务器</option></select></div>
+            <div class="fi"><span class="k">模拟数据（尚未正式接入时使用）</span>
+              <select id="cfMock"><option value="1">开</option><option value="0">关（走真实取数）</option></select></div>
+            <div class="fi"><span class="k">自动刷新（秒）</span><input id="cfRef" type="number" step="5"/></div>
+            <div class="fi" style="grid-column:span 2"><span class="k">数据源基址</span><input id="cfBase" type="text" readonly/></div>
+          </div>
+        </div>
+        <div class="sec"><div class="st">口径速查（易混淆定义 · 供热面积折算 · 公式文字版）<span class="hint">写入配置，便于后期查阅</span></div>
+          <div id="cfGlossary" class="glossary"></div>
+        </div>
+      </div>
+
+      <div class="pg hidden" data-pg="1">
+        <div class="sec"><div class="st">负荷参数</div>
+          <div class="gridc">
+            <div class="fi"><span class="k">实供面积（m²，随实际供热面积修改）</span><input id="cfArea" type="number" step="0.1"/></div>
+            <div class="fi"><span class="k">单位热指标（W/m²，靶心）</span><input id="cfQ" type="number" step="0.1"/></div>
+            <div class="fi"><span class="k">热指标对应基准温差（K）</span><input id="cfTBase" type="number" step="0.5"/></div>
+            <div class="fi"><span class="k">室内基准温度（℃）</span><input id="cfTIn" type="number" step="0.5"/></div>
+            <div class="fi"><span class="k">炉水温度限值（℃）</span><input id="cfTLimit" type="number" step="1"/></div>
+          </div>
+        </div>
+        <div class="sec"><div class="st">调节判据</div>
+          <div class="gridc">
+            <div class="fi"><span class="k">死区（%）</span><input id="cfDead" type="number" step="0.5"/></div>
+            <div class="fi"><span class="k">建议出水温度步进（℃）</span><input id="cfStepT" type="number" step="0.5"/></div>
+            <div class="fi"><span class="k">建议循环流量步进（%）</span><input id="cfStepF" type="number" step="0.5"/></div>
+            <div class="fi"><span class="k">单次修正限幅（%）</span><input id="cfCap" type="number" step="1"/></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pg hidden" data-pg="2">
+        <div class="sec"><div class="st">时段划分（一天 5 段，可改时间）</div>
+          <table class="tblmini" id="cfPeriods"></table>
+          <div class="hint" style="margin-top:7px">运营日固定从首段起点（默认 09:00）起算，24 小时后清零；跨零点的段允许（如 S5 01:00–09:00）。</div>
+        </div>
+        <div class="sec"><div class="st">24 小时天气预报（运营日 09:00 起逐时，共 24 个值，℃）</div>
+          <div class="gridc">
+            <div class="fi"><span class="k">取数方式</span>
+              <select id="cfWxSrc"><option value="mock">内置模拟</option><option value="manual">手工填写</option><option value="url">接口地址</option></select>
+            </div>
+            <div class="fi"><span class="k">取数间隔</span>
+              <select id="cfWxIv"><option value="3">每 3 小时</option><option value="1">每 1 小时</option><option value="6">每 6 小时</option></select>
+            </div>
+            <div class="fi" style="grid-column:span 2"><span class="k">接口地址（返回逐时温度数组或 hourly 字段）</span><input id="cfWxUrl" type="text" placeholder="http://..."/></div>
+          </div>
+          <div style="margin-top:9px"><span class="k hint">逐时温度（逗号分隔，第 1 个为 09:00，最后 1 个为次日 08:00）</span>
+            <textarea id="cfWxHourly" rows="2" placeholder="8,7.5,7,6.5,..."></textarea></div>
+          <div class="hint" style="margin-top:5px">取数时间：<span id="cfWxAt" class="code">—</span></div>
+        </div>
+      </div>
+
+      <div class="pg hidden" data-pg="3">
+        <div class="sec"><div class="st">运行参数KPI（编辑器式） <span class="hint">可增删卡、改标题/单位/标签；数据来源=上报 / 上传 / 衍生，与驾驶舱编辑器KPI一致</span>
+          <span class="right hint" style="margin-left:auto"><button class="btn sm" id="btnAddKpi">＋ 添加 KPI 卡</button></span></div>
+          <table class="tblmini" id="cfKpis"></table>
+          <div class="hint" id="kpiHint" style="margin-top:7px">—</div>
+        </div>
+        <div class="sec"><div class="st">变量绑定 <span class="hint">数据分三类，与编辑器一致：上报（平台上报点位）/ 衍生（加工引擎衍生变量）/ 上传（静态或人工维护值）</span>
+          <span class="right hint" style="margin-left:auto"><button class="btn sm" id="btnLoadVars">载入变量字典</button></span></div>
+          <table class="tblmini" id="cfVars"></table>
+          <div class="hint" style="margin-top:8px" id="varDictHint">未载入变量字典；点「载入变量字典」从当前数据源拉取真实设备/测点（/api/proc/vars）。绑定留空时该变量取模拟值或按缺数处理。</div>
+        </div>
+        <div class="sec"><div class="st">绑定状态检查</div>
+          <div id="bindStatus" class="hint">—</div>
+        </div>
+      </div>
+
+      <div class="pg hidden" data-pg="4">
+        <div class="sec"><div class="st">计算公式 <span class="hint">变量名直接用英文标识，支持 + - * / ( ) 与三元 ?:，可用 Math 函数；改完点「试算」看结果</span></div>
+          <table class="tblmini" id="cfFormulas"></table>
+        </div>
+        <div class="sec"><div class="st">可用变量（试算取值）</div>
+          <div class="hint" id="varListHint"></div>
+          <div style="margin-top:8px"><button class="btn sm" id="btnTestAll">全部试算</button></div>
+        </div>
+      </div>
+    </div>      </div>
+    </div>
+    <div class="df">
+      <button class="btn" id="btnImport">导入配置</button>
+      <button class="btn" id="btnExport">导出配置 JSON</button>
+      <button class="btn" id="btnReset">恢复默认</button>
+      <div style="margin-left:auto"></div>
+      <span class="hint" id="cfgMsg"></span>
+    </div>
+  </div>
+</div>
+<input type="file" id="fileImport" accept=".json" style="display:none"/>
+
+<script src="./echarts.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js';document.head.appendChild(s)"></script>
+<script>
+"use strict";
+/* 智能控制管理中心（供热子驾驶舱 · 独立页试运行）
+   口径：运营日 09:00 起算；5 段；半小时节拍；全额结转；只读文字建议 */
+var VERSION = 'v0.11.1-20261015-1326';
+// ===== Excel 真实回放数据（2025-12-24 运营日 09:00 起，老大提供 44h 模拟台账） =====
+// 24 个整点逐时外温（09:00~次日08:00）
+var REPLAY_HOURLY = [-7,-5.3,-2.2,2.6,3.2,0.4,0.8,1,0.5,-0.4,-1.1,-1.6,-2.6,-3.1,-4.8,-5.5,-6,-6.4,-6.6,-6.8,-8,-8.5,-8.6,-9];
+// 表底累计（热量表），09:00 起每半小时一个读数，到 22:30 共 28 点
+var REPLAY_METER = [87620,88759.875,89879.75,91039.625,91969.5,93209.375,94029.25,95419.125,96569,97808.875,99068.75,99988.625,101188.5,102628.375,103668.25,104458.125,105348,106473.775,107819.55,108845.325,109591.1,110436.875,111662.65,112438.425,113234.2,114038.45,114802.7,115701,116299.3,117031.35,117813.4,118587.3,119232.65,120173.556,120734.462,121725.369,122436.275,123047.181,124038.087,124918.994,125539.9,126369.925,127569.95,128559.975,129550]; // 02版: 24日凌晨01:00(23日S5夜表)起每半小时,到23:00共45点
+var REPLAY_DAY = '2025-12-24';   // 运营日
+var REPLAY_NOW = '23:00';        // 当前时刻模拟点（表底数据终点）
+// 采暖日 09:00 日界结转清零：运营日从当日 09:00 起，首段(S1)不继承上一运营日夜段结转，
+// 表底仅含当日 09:00 后（Excel 02版：24日09:00起 B1 上段结转 G=0），S1 初始 carry = 0
+var REPLAY_INIT_CARRY = 0;       // 运营日首段(S1)的上运营日结转输入（kWh），09:00清零口径
+var REPLAY = false;              // 由顶栏「真实回放」按钮切换
+var SERVERS = {
+  test: { name:'测试服务器', base:'http://123.57.204.128:8080/api/proc', host:'123.57.204.128' },
+  prod: { name:'生成服务器', base:'http://8.130.182.120:8080/api/proc', host:'8.130.182.120' }
+};
+var WINS = { slim:{pre:1,post:1,name:'极简模式'}, std:{pre:2,post:2,name:'标准模式'}, long:{pre:4,post:4,name:'长模式'} };
+var PERIOD_DEF = [
+  { k:'S1', name:'S1 上午段', start:'09:00', end:'13:00' },
+  { k:'S2', name:'S2 午间段', start:'13:00', end:'17:00' },
+  { k:'S3', name:'S3 晚间段', start:'17:00', end:'21:00' },
+  { k:'S4', name:'S4 夜间段', start:'21:00', end:'01:00' },
+  { k:'S5', name:'S5 凌晨段', start:'01:00', end:'09:00' }
+];
+var FML_DEF = [
+  { k:'needKW',     name:'需热功率（kW）',       expr:'area * qTarget * (tIn - tOut) / tBase / 1000' },
+  { k:'actualKW',   name:'实际供热功率（kW）',   expr:'(meterEnd - meterBeg) / halfH' },
+  { k:'devPct',     name:'偏差率（%）',          expr:'(actualKW - needKW) / needKW * 100' },
+  { k:'segNeedKWh', name:'段需热量（kWh）',      expr:'area * qTarget / tBase / 1000 * (tIn - tOutAvg) * segH' },
+  { k:'adviseStep', name:'建议调节量（℃ 或 %）', expr:'devPct > deadband ? -stepT : (devPct < -deadband ? stepT : 0)' }
+];
+var ALLOWED = ['area','qTarget','tIn','tOut','tOutAvg','tBase','tBoilerLimit','tBoiler','flow','deadband','stepT','stepFlow','capPct','halfH','segH','meterBeg','meterEnd','needKW','actualKW','devPct','segNeedKWh','segDone','carry','leftNeed','leftH','wantKW','Math'];
+
+function defCfg(){
+  return {
+    project:'西夏公寓', server:'test', cfgVer:3,
+    area:101826.7, qTarget:16, tBase:20, tIn:20, tBoilerLimit:92,
+    deadband:5, stepT:2, stepFlow:5, capPct:15,
+    winMode:'std', refreshSec:60, mock:true,
+    periods:JSON.parse(JSON.stringify(PERIOD_DEF)),
+    // 供热面积折算：停暖率 → 折算系数 插值表（供热面积 = 供暖面积 + 停暖面积×折算系数）
+    stopTable: [
+      {p:0.05,k:0.751},{p:0.10,k:0.723},{p:0.15,k:0.695},{p:0.20,k:0.667},
+      {p:0.25,k:0.639},{p:0.30,k:0.611},{p:0.35,k:0.583},{p:0.40,k:0.555},
+      {p:0.45,k:0.527},{p:0.50,k:0.499}
+    ],
+    stopRate:0.2,  // 当前停暖率（供暖面积:停暖面积 = 1:stopRate）
+    heatArea:74277,  // 供暖面积 m²
+    stopArea:49678,  // 停暖面积 m²
+    stopK:0.554565,  // 当前折算系数（供热面积 = 供暖面积 + 停暖面积×stopK）
+    // 口径说明（只读速查，写入配置便于页面留存查阅）
+    glossary: {
+      needKW:'时段需热功率（绿线，含上时段结转）：本时段整段理论目标，段内恒定。= (本段净需热 + 上时段结转能量) ÷ 段长；本段净需热 = 供热面积×16×(20−段内均温)÷20×段长。供热面积=供暖面积+停暖面积×折算系数；当前 = 74277 + 49678×0.554565 = 101826.7 m²。结转=能量(kWh)，段末结转流转，24h清零。',
+      wantKW:'当前应供功率（黄线）：本时刻该供多少，每半小时刷新。= (时段需热总量(含结转) − 已供热) ÷ 剩余小时。剩余供热实时滚动，段末若滞后就地成结转。',
+      segCarry:'时段结转（能量kWh，段末结转，24h清零）：一个时段结束时 (本时段需热总量(含结转) − 本时段实际供热) 的差值，滚入下一个时段；24小时运营日结束统一清零。结转计入每日首段绿线后的后续时段绿线。',
+      slotCarry:'段内结转（半小时基准，段内能量(kWh)）：本段内每半小时 (本半小时应供 − 本半小时实际) 累计滚动，是黄线本时刻刷新的依据，段末并入时段结转。'
+    },
+    vars:{
+      meter:  { label:'热量表累计表底', cls:'reported', unit:'kWh',  device:'', point:'' },
+      tboiler:{ label:'锅炉炉水温度',   cls:'reported', unit:'℃',   device:'', point:'' },
+      flow:   { label:'系统循环水量',   cls:'reported', unit:'m³/h', device:'', point:'' },
+      tout:   { label:'室外温度（实测，仅记录）', cls:'reported', unit:'℃', device:'', point:'' },
+      area:   { label:'实供面积',       cls:'const',    unit:'m²',   device:'', point:'' }
+    },
+    weather:{ source:'url', interval:3,
+      url:'https://api.open-meteo.com/v1/forecast?latitude=38.49&longitude=106.15&hourly=temperature_2m&timezone=Asia%2FShanghai&forecast_days=2&past_hours=12',
+      fetchedAt:'', hourly:[] },
+    formulas: FML_DEF.reduce(function(o,f){ o[f.k]=f.expr; return o; }, {}),
+    // 运行参数KPI：编辑器式，可自由增删卡、改标题/单位/标签、选数据来源绑定
+    // src = var(实测变量,key为CFG.vars键) | cfg(配置参数,key为CFG标量) | calc(内建计算值) | const(固定文案)
+    kpis: [
+      { label:'运营日',          unit:'',    badge:'',         bc:'',        src:'derived', key:'DAY',     var:'', val:'' },
+      { label:'当前时段',        unit:'',    badge:'',         bc:'ok',      src:'derived', key:'CURSEG',  var:'', val:'' },
+      { label:'时段内进度',      unit:'%',   badge:'',         bc:'',        src:'derived', key:'PROG',    var:'', val:'' },
+      { label:'预报外温（当前）',unit:'℃',  badge:'实时',      bc:'realtime',src:'derived', key:'WXNOW',   var:'', val:'' },
+      { label:'锅炉炉水温度',    unit:'℃',  badge:'实时',      bc:'realtime',src:'reported',key:'',       var:'tboiler', val:'' },
+      { label:'炉水温度限值',    unit:'℃',  badge:'',         bc:'',        src:'upload',  key:'cfg:tBoilerLimit', var:'', val:'' },
+      { label:'系统循环水量',    unit:'m³/h',badge:'实时',     bc:'realtime',src:'reported',key:'',       var:'flow', val:'' },
+      { label:'今日实际供热量',  unit:'kWh', badge:'现在',     bc:'ok',      src:'derived', key:'DONEALL',var:'', val:'' },
+      { label:'采样节拍',        unit:'',    badge:'',         bc:'',        src:'upload',  key:'',       var:'', val:'半小时（热量表 5 分钟首尾取差）' },
+      { label:'预报取数时间',    unit:'',    badge:'',         bc:'',        src:'derived', key:'WXAT',   var:'', val:'' }
+    ]
+  };
+}
+
+function pad(n){ return (n<10?'0':'')+n; }
+function ymd(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function hm(d){ return pad(d.getHours())+':'+pad(d.getMinutes()); }
+function hmOf(min){ min=((min%1440)+1440)%1440; return pad(Math.floor(min/60))+':'+pad(min%60); }
+function addMin(d,m){ return new Date(d.getTime()+m*60000); }
+function dayStart9(d){ var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()); x.setHours(9,0,0,0); return x; }
+function curWorkDayStart(){ var n=new Date(); var s=dayStart9(n); return n<s? addMin(s,-1440):s; }
+function num(v,dig){
+  if(v===null||v===undefined||isNaN(v)) return '—';
+  var s=Number(v); var d=(dig===undefined?1:dig);
+  return s.toLocaleString('zh-CN',{minimumFractionDigits:d,maximumFractionDigits:d});
+}
+function mint(str){ var p=String(str).split(':'); return (+p[0])*60+(+p[1]||0); }
+function rnd(seed){ var t=seed>>>0; return function(){ t=(t*1664525+1013904223)>>>0; return t/4294967296; }; }
+function seedOf(s){ var h=2166136261; for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
+function fmtISO(d){
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+}
+
+var CFG = null;
+function cfgKey(server){ return 'hs_cfg_v1_'+server; }
+function loadCfg(server){
+  var base = defCfg(); base.server = server;
+  try{
+    var raw = localStorage.getItem(cfgKey(server));
+    if(raw){ return mergeCfg(base, JSON.parse(raw)); }
+  }catch(e){}
+  return base;
+}
+function mergeCfg(base,o){
+  var isOld = !o.cfgVer || o.cfgVer < 2;   // 旧配置：KPI来源还是 var/cfg/calc/const 四类
+  var wxOlder = !o.cfgVer || o.cfgVer < 3; // 3 之前的天气配置没配 url，直接套新版默认真实源
+  var wxEmpty = !o.weather || !o.weather.url;
+  for(var k in o){
+    if(!o.hasOwnProperty(k)) continue;
+    if(k==='kpis' && isOld) continue;      // 旧版 kpis 丢弃，用三分类默认
+    if(k==='weather' && wxOlder && wxEmpty) continue; // 旧空天气：保留新版默认(Open-Meteo真实源)
+    if(k==='vars'||k==='formulas'||k==='weather'){
+      for(var k2 in o[k]){ if(o[k][k2]!==undefined) base[k][k2]=o[k][k2]; }
+    } else base[k]=o[k];
+  }
+  if(!base.periods||!base.periods.length) base.periods=JSON.parse(JSON.stringify(PERIOD_DEF));
+  for(var i=0;i<FML_DEF.length;i++){ if(!base.formulas[FML_DEF[i].k]) base.formulas[FML_DEF[i].k]=FML_DEF[i].expr; }
+  // 规范 vars.cls：旧命名 const -> upload（对齐 上报/上传/衍生 三分类）
+  for(var v2 in base.vars){ if(base.vars[v2].cls==='const') base.vars[v2].cls='upload'; }
+  return base;
+}
+function saveCfg(){ try{ localStorage.setItem(cfgKey(CFG.server), JSON.stringify(CFG)); }catch(e){} }
+
+function evalExpr(expr, ctx){
+  if(!expr) return null;
+  var ids = String(expr).match(/[A-Za-z_][A-Za-z0-9_]*/g) || [];
+  for(var i=0;i<ids.length;i++){ if(ALLOWED.indexOf(ids[i])<0) throw new Error('不允许的标识符：'+ids[i]); }
+  if(!/^[\w\s+\-*/().?:<>=!&|%,']+$/.test(expr)) throw new Error('表达式含不允许的字符');
+  var fn = new Function('c','with(c){ return ('+expr+'); }');
+  var v = fn(ctx);
+  if(typeof v!=='number' || !isFinite(v)) return null;
+  return v;
+}
+
+function segsOf(cfg){
+  return cfg.periods.map(function(p){
+    var s = mint(p.start), e = mint(p.end);
+    var st = ((s-540)%1440+1440)%1440;
+    var en = ((e-540)%1440+1440)%1440;
+    if(en<=st) en += 1440;
+    return { k:p.k, name:p.name, start:st, end:en, hours:(en-st)/60, slots:(en-st)/30, startHM:p.start, endHM:p.end };
+  });
+}
+function buildSlots(cfg, dayD){
+  var D0 = dayStart9(dayD), segs = segsOf(cfg), list = [];
+  for(var i=0;i<48;i++){
+    var t0 = addMin(D0, i*30), t1 = addMin(D0, (i+1)*30), mid = i*30+15, sg = segs[0];
+    for(var j=0;j<segs.length;j++){ if(mid>segs[j].start && mid<=segs[j].end){ sg=segs[j]; break; } }
+    list.push({ i:i, t0:t0, t1:t1, label:hm(t0), endLabel:hm(t1), seg:sg.k, segName:sg.name, off:i*30 });
+  }
+  return { D0:D0, segs:segs, slots:list };
+}
+// ===== 预报外温自动拉取（银川西夏区）=====
+// 页面独立拉取天气接口：配置页 weather.url 填接口地址，可随时更换。
+// 返回 24 点逐时预报数组（对齐运营日 09:00 日界的 weather.hourly 结构）。
+// 支持两种返回格式：
+//   1) 直接返回逐时温度数组：[8.2,7.5,6.8,...] 共24个
+//   2) 返回 JSON 含 hourly 字段（数组）或 forecasts/daily 数组
+async function fetchWeather(){
+  var u = CFG && CFG.weather && CFG.weather.url;
+  if(!u) return null;
+  var hasFetch = (typeof fetch==='function');
+  if(!hasFetch) return null;
+  try{
+    var resp = await fetch(u, {method:'GET', headers:{'Accept':'application/json'}});
+    if(!resp || !resp.ok) return null;
+    var ct = resp.headers && resp.headers.get ? resp.headers.get('content-type')||'' : '';
+    var text = await resp.text();
+    var data = null;
+    try{ data = JSON.parse(text); }catch(e){ data = null; }
+    var arr = null;
+    if(data && data.hourly && Array.isArray(data.hourly.temperature_2m)){
+      // ---- Open-Meteo 格式：hourly.temperature_2m 逐时 + hourly.time ----//
+      // 对齐地图当天 09:00 起 24 点（运营日日界），不足 24 则取全部。
+      var _t2 = data.hourly.temperature_2m, _tm = data.hourly.time||[], _i0=0, _day='';
+      try{ _day = new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Shanghai'}); }catch(e){ _day=''; }
+      for(var _k=0;_k<_tm.length;_k++){
+        var _ts=String(_tm[_k]);
+        if(_day && _ts.slice(0,10)===_day && Number(_ts.slice(11,13))===9){ _i0=_k; break; }
+      }
+      arr = _t2.slice(_i0, _i0+24);
+    }
+    else if(Array.isArray(data)){ arr = data; }
+    else if(data && Array.isArray(data.hourly)){ arr = data.hourly; }
+    else if(data && Array.isArray(data.forecasts)){ arr = data.forecasts; }
+    else if(data && Array.isArray(data.list)){ arr = data.list; }
+    if(!arr) return null;
+    // 扁平化：支持对象数组（取温度字段 t/temp/temperature/v）或纯数字数组
+    var out = [];
+    for(var i=0;i<arr.length;i++){
+      var it = arr[i], v = null;
+      if(typeof it==='number'){ v = it; }
+      else if(typeof it==='object' && it!==null){
+        if(typeof it.t==='number') v = it.t;
+        else if(typeof it.temp==='number') v = it.temp;
+        else if(typeof it.temperature==='number') v = it.temperature;
+        else if(typeof it.tmp==='number') v = it.tmp;
+        else if(typeof it.value==='number') v = it.value;
+        else if(typeof it.v==='number') v = it.v;
+      }
+      if(v!==null && isFinite(v)) out.push(Math.round(v*10)/10);
+      if(out.length>=24) break;
+    }
+    if(out.length>=24){
+      CFG.weather.hourly = out.slice(0,24);   // 只取前24小时（未来24h预报）
+      CFG.weather.fetchedAt = fmtISO(new Date());  // 标本次拉取时间
+      return out.slice(0,24);
+    }
+    return null;
+  }catch(e){ return null; }
+}
+
+function mockWeather(cfg, D0){
+  var r = rnd(seedOf(ymd(D0)+'wx')), arr=[];
+  for(var h=0; h<24; h++){
+    var hour = (9+h)%24;
+    var base = 4.2 + 4.6*Math.cos(2*Math.PI*(hour-14)/24);
+    arr.push(Math.round((base + (r()-0.5)*0.6)*10)/10);
+  }
+  return arr;
+}
+function wxAt(cfg, hourly, offMin){
+  var h = offMin/60, i = Math.floor(h);
+  if(i<0) i=0; if(i>23) i=23;
+  var j = Math.min(23, i+1), f = h-i;
+  return hourly[i]*(1-f) + hourly[j]*f;
+}
+function heatAreaOf(cfg){
+  var a = Number(cfg.heatArea)||0, s = Number(cfg.stopArea)||0, k = Number(cfg.stopK);
+  if(!isFinite(k)||k<=0) k = Number(cfg.stopRate)||0.2;
+  return (a + s*k)||(Number(cfg.area)||0);
+}
+function needKWOf(cfg, tOut){
+  var ha = heatAreaOf(cfg);
+  if(!(cfg.qTarget>0)) cfg.qTarget = 16;         // 关键参数兜底：热指标非法/为0时用默认，避免需热整列清零
+  if(!isFinite(cfg.tBase)||cfg.tBase<=0) cfg.tBase = 20;
+  if(!isFinite(cfg.tIn)) cfg.tIn = 20;
+  var ctx = { area:ha, qTarget:cfg.qTarget, tIn:cfg.tIn, tOut:tOut, tBase:cfg.tBase };
+  try{ var v = evalExpr(CFG.formulas.needKW, ctx); return (v===null?0:v); }
+  catch(e){ return ha*cfg.qTarget*(cfg.tIn-tOut)/cfg.tBase/1000; }
+}
+function segIndexOf(cfg, offMin){
+  var segs = segsOf(cfg);
+  for(var j=0;j<segs.length;j++){ if(offMin>segs[j].start && offMin<=segs[j].end) return j; }
+  return 0;
+}
+function segOffsetOf(segs, g){ var o=0; for(var q=0;q<g;q++) o += segs[q].slots; return o; }
+function replayMeterSeries(D0, endT){
+  // 真实表底回放：表底起点为 24日凌晨 01:00（=23日S5夜表起点，相对当日09:00 D0 = -480min），
+  // 连续铺 45 个半小时点(01:00→23:00)，使 09:00 表底准确对齐 105348。供热结算仍按运营日(09:00起48槽)取数。
+  var out = [];
+  var startOff = -480; // REPLAY_METER[0] 对应 凌晨01:00
+  for(var i=0;i<REPLAY_METER.length;i++){
+    var t = addMin(D0, startOff + i*30);
+    if(t.getTime() > endT.getTime()) break;
+    out.push({ t:t, v: REPLAY_METER[i] });
+  }
+  return out;
+}
+function mockMeterSeries(cfg, D0, endT){
+  var wx = (cfg.weather.hourly && cfg.weather.hourly.length===24)? cfg.weather.hourly : mockWeather(cfg, D0);
+  var segs = segsOf(cfg);
+  var acc = 1286400 + (seedOf(ymd(D0))%900), out = [], r = rnd(seedOf(ymd(D0)+'mt'));
+  var t = new Date(D0.getTime());
+  while(t.getTime() <= endT.getTime()){
+    var off = (t.getTime()-D0.getTime())/60000;
+    var sg = segs[segIndexOf(cfg, off)];
+    if(off > segs[segs.length-1].end) sg = segs[segs.length-1];
+    var needKW = needKWOf(cfg, wxAt(cfg, wx, off));
+    var bias = 0.16*Math.sin(2*Math.PI*(off/240));
+    if(sg.k==='S1') bias += 0.10; else if(sg.k==='S2') bias -= 0.04;
+    else if(sg.k==='S3') bias += 0.05; else if(sg.k==='S4') bias -= 0.06; else bias -= 0.09;
+    var actKW = needKW * (1 + bias + (r()-0.5)*0.06);
+    if(actKW<0) actKW = 0;
+    acc += actKW * (5/60);
+    out.push({ t:new Date(t.getTime()), v: Math.round(acc*100)/100 });
+    t = addMin(t, 5);
+  }
+  return out;
+}
+function mockSeries(cfg, D0, endT, kind){
+  var out=[], t=new Date(D0.getTime()), r = rnd(seedOf(ymd(D0)+kind));
+  var wx = (cfg.weather.hourly && cfg.weather.hourly.length===24)? cfg.weather.hourly : mockWeather(cfg, D0);
+  while(t.getTime() <= endT.getTime()){
+    var off = (t.getTime()-D0.getTime())/60000, v;
+    if(kind==='tboiler'){
+      var tOut = wxAt(cfg, wx, off);
+      v = 46 + (20 - tOut) * 1.55 + 6*Math.sin(2*Math.PI*(off/1440)*3) + (r()-0.5)*0.6;
+      if(off>900) v += 2.4;
+      if(v>92) v = 92 - (r()*0.4);
+    } else {
+      v = 62 + 9*Math.sin(2*Math.PI*(off/1440)*2) + (r()-0.5)*3;
+    }
+    out.push({ t:new Date(t.getTime()), v: Math.round(v*100)/100 });
+    t = addMin(t, 5);
+  }
+  return out;
+}
+function pickAt(series, t, tolMin){
+  if(!series || !series.length) return null;
+  var best=null;
+  for(var i=series.length-1;i>=0;i--){ if(series[i].t.getTime()<=t.getTime()){ best=series[i]; break; } }
+  if(!best) return null;
+  if(tolMin && (t.getTime()-best.t.getTime())/60000 > tolMin) return null;
+  return best;
+}
+
+async function procGet(qs){
+  var r = await fetch(SERVERS[CFG.server].base + qs, { cache:'no-store' });
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return await r.json();
+}
+async function fetchReal(D0, endT){
+  var v = CFG.vars, res = { meter:null, tboiler:null, flow:null, tout:null, err:[] };
+  var f0 = new Date(D0.getTime()-3600000), f1 = new Date(endT.getTime()+60000);
+  async function one(key, iv){
+    var b = v[key];
+    if(!b || !b.device || !b.point) return null;
+    try{
+      var qs = '/data?device_id='+encodeURIComponent(b.device)+'&point_name='+encodeURIComponent(b.point)
+        +'&from_t='+encodeURIComponent(fmtISO(f0))+'&until_t='+encodeURIComponent(fmtISO(f1))
+        +'&interval='+iv+'&limit=20000';
+      var rows = await procGet(qs);
+      return (rows||[]).map(function(r){ return { t:new Date(String(r.t).replace(' ','T')), v:Number(r.v) }; })
+        .filter(function(r){ return !isNaN(r.v); });
+    }catch(e){ res.err.push(key+'：'+(e&&e.message?e.message:e)); return null; }
+  }
+  res.meter = await one('meter','raw');
+  res.tboiler = await one('tboiler','raw');
+  res.flow = await one('flow','raw');
+  res.tout = await one('tout','5m');
+  return res;
+}
+
+var MODEL = null, CHART = null, SCCHART = null, SCCHART2 = null, WXCHART = null;
+// 走查模式：手动录入表底验证结算逻辑。WALK.meter[k]=第k个半小时时刻(09:00起)的表底读数；WALK.idx=当前推进到的时刻
+var WALK = { on:false, idx:0, meter:[null], clock:null, count:0 };
+// WALK.count = 已录入的表底读数个数（有效数值）；meter[k]=第k个半小时时刻表底读数
+
+function buildDaySettle(cfg, dayD){
+  var D0y = addMin(dayStart9(dayD), -1440);
+  var Gy = buildSlots(cfg, D0y), segs = Gy.segs, slots = Gy.slots;
+  var hourly = mockWeather(cfg, D0y);
+  var endTy = addMin(D0y, 1440);
+  var meter = (CFG.mock || !cfg.vars.meter.device)? mockMeterSeries(cfg, D0y, endTy) : [];
+  var rows = [];
+  var segAvgY = {};
+  segs.forEach(function(sg){ var ts=[],mm; for(mm=0; mm<sg.hours*60; mm+=60){ var hh=Math.floor(sg.start/60)+Math.floor(mm/60); if(hh>23) hh-=24; ts.push(hourly[hh]); } segAvgY[sg.k]={avg: ts.length? ts.reduce(function(a,b){return a+b;},0)/ts.length:null}; });
+  slots.forEach(function(s){
+    var tOut = wxAt(cfg, hourly, s.off+15);
+    var _av=(segAvgY[s.seg]||{}).avg, needKW = (_av!=null)? needKWOf(cfg,_av):0;
+    var beg = pickAt(meter, s.t0, 12), end = pickAt(meter, s.t1, 12), heat=null, actKW=null, ok=false;
+    if(beg && end && end.v>=beg.v){ heat=end.v-beg.v; actKW=heat/0.5; ok=true; }
+    rows.push({ seg:s.seg, tOut:tOut, needKW:needKW, needKWh:needKW*0.5, heat:heat, actKW:actKW, ok:ok });
+  });
+  var segRows = [], carry = 0;
+  segs.forEach(function(sg){
+    var list = rows.filter(function(r){ return r.seg===sg.k; });
+    var netKWh=0, doneKWh=0, tSum=0;
+    list.forEach(function(r){ netKWh+=r.needKWh; tSum+=r.tOut; if(r.ok){ doneKWh+=r.heat; } });
+    var segNeedKWh = netKWh + carry;         // 时段需热总量 = 净需热 + 上段结转
+    var segNeedKW = segNeedKWh / sg.hours;   // 时段需热功率（含结转）
+    list.forEach(function(r){ r.needKW = segNeedKW; r.needKWh = segNeedKW*0.5; });
+    segRows.push({ k:sg.k, name:sg.name, hours:sg.hours, tOutAvg:list.length? tSum/list.length:null,
+      needKWh:segNeedKWh, doneKWh:doneKWh, carry:carry, segNeedKW:segNeedKW,
+      devAmt: doneKWh-segNeedKWh,
+      devPct: (segNeedKWh>0)? (doneKWh-segNeedKWh)/segNeedKWh*100 : null,
+      needSoFar:segNeedKWh, elapsedH:sg.hours, status:'done', okN:list.length, n:list.length });
+    carry = segNeedKWh - doneKWh;            // 段末结转 = 时段需热总量 - 实际供热
+  });
+  var need = segRows.reduce(function(s,r){ return s+r.needKWh; },0);
+  var done = segRows.reduce(function(s,r){ return s+r.doneKWh; },0);
+  return { day: ymd(D0y), segRows:segRows, need:need, done:done,
+    dev: done-need, devP: need>0? (done-need)/need*100 : 0, carry:carry };
+}
+
+async function buildModel(){
+  var day = REPLAY? REPLAY_DAY : (document.getElementById('daySel').value || ymd(curWorkDayStart()));
+  var parts = day.split('-');
+  var dayD = new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]), 0,0,0);
+  var G = buildSlots(CFG, dayD), D0 = G.D0, segs = G.segs, slots = G.slots;
+  var curStart = REPLAY? new Date(D0.getTime()) : curWorkDayStart();
+  var isPast = D0.getTime() < curStart.getTime();
+  var isCurDay = (D0.getTime() === curStart.getTime());
+  var now = REPLAY? new Date(2025,11,24, Number(REPLAY_NOW.split(':')[0]), Number(REPLAY_NOW.split(':')[1]), 0,0)
+    : (WALK.on? addMin(D0, Math.max(0, WALK.count-1)*30) : new Date());   // 走查：now=D0+(已录入时刻数-1)*30
+  var elapsed = (now.getTime()-D0.getTime())/60000;
+  var curIdx = (elapsed>=0 && elapsed<1440) ? Math.floor(elapsed/30) : -1;
+  var dayEnd = addMin(D0, 1440);
+
+  var hourly = REPLAY? REPLAY_HOURLY.slice(0) : ((CFG.weather.hourly && CFG.weather.hourly.length===24)? CFG.weather.hourly.slice(0) : mockWeather(CFG, D0));
+  if(!CFG.weather.fetchedAt) CFG.weather.fetchedAt = fmtISO(new Date());
+  if(!REPLAY) CFG.weather.hourly = hourly;
+
+  var endT = isCurDay? now : (isPast? dayEnd : D0);
+  var meter=null, tbo=null, flw=null, srcMode='mock', errs=[];
+  if(WALK.on){
+    // 走查：表底来自手动录入序列（每个已录入时刻点一个读数），独占整条取数链
+    meter = [];
+    for(var wk=0; wk<WALK.meter.length; wk++){
+      if(WALK.meter[wk]===null||WALK.meter[wk]===undefined) continue;
+      meter.push({ t: addMin(D0, wk*30), v: WALK.meter[wk] });
+    }
+    meter.sort(function(a,b){ return a.t-b.t; });
+    srcMode='walk';
+    tbo=[]; flw=[];
+  }
+  else if(REPLAY){
+    if(endT.getTime()>D0.getTime()){
+      meter = replayMeterSeries(D0, endT);
+      tbo = mockSeries(CFG, D0, endT, 'tboiler');
+      flw = mockSeries(CFG, D0, endT, 'flow');
+    } else { meter=[]; tbo=[]; flw=[]; }
+    srcMode='replay';
+  } else if(CFG.mock){
+    if(endT.getTime()>D0.getTime()){
+      meter = mockMeterSeries(CFG, D0, endT);
+      tbo = mockSeries(CFG, D0, endT, 'tboiler');
+      flw = mockSeries(CFG, D0, endT, 'flow');
+    } else { meter=[]; tbo=[]; flw=[]; }
+  } else {
+    var R = await fetchReal(D0, endT);
+    errs = R.err;
+    if(R.tboiler) tbo = R.tboiler;
+    if(R.flow) flw = R.flow;
+    if(R.meter && R.meter.length){ meter = R.meter; srcMode='real'; }
+    else {
+      srcMode = (CFG.vars.meter.device && CFG.vars.meter.point)? 'fail' : 'unbound';
+      meter = (endT.getTime()>D0.getTime())? mockMeterSeries(CFG, D0, endT) : [];
+    }
+  }
+
+  var health = { bind:{} };
+  for(var kk in CFG.vars){ health.bind[kk] = !!(CFG.vars[kk].device && CFG.vars[kk].point); }
+
+  // 段内整点均温 → 段恒定需热（绿线）：供热面积×16×(20−段内均温)÷20÷1000
+  var segAvgMap = {};
+  segs.forEach(function(sg){
+    var ts=[], mm;
+    for(mm=0; mm<sg.hours*60; mm+=60){ var hh=Math.floor(sg.start/60)+Math.floor(mm/60); if(hh>23) hh-=24; ts.push(hourly[hh]); }
+    var avg = ts.length? ts.reduce(function(a,b){return a+b;},0)/ts.length : null;
+    segAvgMap[sg.k] = { avg: avg, kw: (avg!=null)? needKWOf(CFG, avg) : 0 };
+  });
+  var rows = [], missing = 0;
+  for(var i=0;i<slots.length;i++){
+    var s = slots[i];
+    var tOut = wxAt(CFG, hourly, s.off+15);
+    var _avg = (segAvgMap[s.seg]||{}).avg;
+    var needKW = (_avg!=null)? needKWOf(CFG, _avg) : 0, needKWh = needKW*0.5;
+    var countable = isPast || (curIdx>=0 && s.i < curIdx);
+    var beg = countable? pickAt(meter, s.t0, 12) : null;
+    var end = countable? pickAt(meter, s.t1, 12) : null;
+    var heat=null, actKW=null, ok=false;
+    if(beg && end && end.v>=beg.v){ heat = end.v-beg.v; actKW = heat/0.5; ok = true; }
+    if(countable && !ok) missing++;
+    var bp = pickAt(tbo, s.t1, 12), fp = pickAt(flw, s.t1, 12);
+    var devPct = (ok && needKW>0)? (actKW-needKW)/needKW*100 : null;
+    rows.push({ i:s.i, label:s.label, endLabel:s.endLabel, seg:s.seg, segName:s.segName,
+      tOut:tOut, needKW:needKW, needKWh:needKWh, heat:heat, actKW:actKW, ok:ok,
+      cum: end? end.v : null, tBoiler: bp? bp.v : null, flow: fp? fp.v : null, devPct:devPct });
+  }
+  if(!CFG.mock && meter && meter.length) rows.forEach(function(r){ if(r.cum===null){ var p=pickAt(meter, addMin(D0, r.i*30+30), 60); r.cum = p? p.v : null; } });
+
+  // 结转口径：REPLAY(台账对账)逐段滚结转到底；真实/走查模式"结转只发生在当前时段"
+  // —— 当前(cur)段叠加已结算结转补缺，已结算(done)与未来(wait)段都用纯净需热(外温预测)。
+  var segRows = [], carry = REPLAY? REPLAY_INIT_CARRY : 0;
+  var prevSegCur = false;   // 前一段是否仍为 cur(等待热量表)，是则后续段统一 wait
+  for(var g=0; g<segs.length; g++){
+    var sg = segs[g];
+    var list = rows.filter(function(r){ return r.seg===sg.k; });
+    var netKW = (segAvgMap[sg.k]||{}).kw||0;         // 段净需热功率（不含结转，段内恒定）
+    var netKWh = netKW * sg.hours;                    // 本段净需热总量（kWh）
+    var doneKWh=0, okN=0;
+    list.forEach(function(r){ if(r.ok){ doneKWh += r.heat; okN++; } });
+    var status = 'wait';
+    var gOff = segOffsetOf(segs, g);
+    if(isPast) status = 'done';
+    else if(prevSegCur){ status = 'wait'; }
+    else if(curIdx >= gOff && curIdx < gOff + sg.slots) status = 'cur';
+    else if(curIdx >= gOff + sg.slots){
+      // 段末已到：等该段最后一个半小时的热量表(末槽)到位才切 done，
+      // 避免热量表延迟上报导致用不准的底数结算新时段。末槽 ok(表底齐全)才允许切段。
+      var lastR = list[sg.slots-1];
+      status = (lastR && lastR.ok) ? 'done' : 'cur';
+    }
+    // 本段用于展示的结转：REPLAY 每段都带(逐段滚)；真实/走查 仅当前(cur)段带累计结转，done/wait 用净需热
+    var carryIn = (REPLAY)? carry : ((status==='cur')? carry : 0);
+    var segNeedKWh = netKWh + carryIn;                // 时段需热总量（展示口径）
+    var segNeedKW = segNeedKWh / sg.hours;            // 时段需热功率（绿线口径）
+    // 台账每行"当时的黄线"（当前需热功率）：以该行开始时刻为锚，
+    // 段需热总量(展示口径) − 到该行开始前累计实际供热，再除以该行开始后的剩余小时 → 随进度滚动。
+    // 首行(段刚开始)累计供热=0、剩余=整段时长，故黄线=时段需热功率(绿线)；之后每行开始才逐行滚动纠偏。
+    var cum2 = 0;
+    list.forEach(function(r, li){
+      r.needKW = segNeedKW; r.needKWh = segNeedKW*0.5;
+      var hDone = li*0.5;                               // 该行开始时刻已过小时（首行=0）
+      var lh = Math.max(0, sg.hours - hDone);           // 该行开始后的剩余小时
+      var leftRow = Math.max(0, segNeedKWh - cum2);     // 到该行开始前的剩余应供（首行=整段总量）
+      r.wantKW = (lh>0)? leftRow/lh : null;             // 当时的黄线（当前需热功率）
+      if(r.ok) cum2 += r.heat;                          // 本行供热滚入下一行起始累计
+    });
+    var completedSlots = (status==='done')? sg.slots : (status==='cur'? Math.max(0, curIdx-gOff) : 0);
+    var elapsedH = completedSlots*0.5;
+    var leftH = 0;
+    if(status==='cur'){ leftH = Math.max(0, sg.hours - completedSlots*0.5); }
+    var left = Math.max(0, segNeedKWh - doneKWh);     // 剩余供热 = 时段需热总量(展示) - 已供热
+    var wantKW = (status==='cur' && leftH>0)? left/leftH : null;   // 黄线 = 剩余供热÷剩余小时
+    segRows.push({ k:sg.k, name:sg.name, hours:sg.hours, tOutAvg: (segAvgMap[sg.k]||{}).avg!=null? (segAvgMap[sg.k]||{}).avg : null,
+      netKW:netKW, segNeedKW:segNeedKW, needKWh:segNeedKWh, doneKWh:doneKWh, carry:carryIn, carryStart:carry, left:left, leftH:leftH, wantKW:wantKW,
+      devAmt: doneKWh-segNeedKWh,
+      devPct: (segNeedKWh>0 && status==='done')? (doneKWh-segNeedKWh)/segNeedKWh*100 : null,
+      progDevPct: (status==='cur' && segNeedKWh>0 && elapsedH>0)? (doneKWh - segNeedKWh*(elapsedH/sg.hours))/(segNeedKWh*(elapsedH/sg.hours))*100 : null,
+      elapsedH:elapsedH, needSoFar: segNeedKWh*(elapsedH/sg.hours),
+      status:status, okN:okN, n:list.length, gOff:gOff });
+    // 本段仍 cur(等待热量表)=前序未清，置 flag 供后续段统一 wait，保证仅一段 cur
+    if(status==='cur') prevSegCur = true;
+    // 结转滚给下一段：REPLAY 逐段滚；真实/走查 只累计已结算(done)段结余供下一个当前(cur)段补缺，未来段不复用
+    if(REPLAY){
+      if(status==='done' || status==='cur') carry = (netKWh + carryIn) - doneKWh;
+    } else {
+      if(status==='done') carry += (netKWh - doneKWh);
+    }
+  }
+
+  var curSeg=null, curSegRow=null;
+  for(var g2=0; g2<segRows.length; g2++){ if(segRows[g2].status==='cur'){ curSeg=segs[g2]; curSegRow=segRows[g2]; break; } }
+  var core = null;
+  if(curSeg && curIdx>=1){
+    var prev = rows[curIdx-1];
+    var actKW = prev.actKW, wantKW = curSegRow.wantKW;
+    var devPct = (actKW!==null && wantKW>0)? (actKW-wantKW)/wantKW*100 : null;
+    var tB = pickAt(tbo, now, 20), fF = pickAt(flw, now, 20);
+    var doneSlots2 = curIdx - curSegRow.gOff + 1;
+    core = { seg:curSeg, row:curSegRow, actKW:actKW, wantKW:wantKW, devPct:devPct,
+      doneSlots:doneSlots2, tBoiler: tB? tB.v:null, flow: fF? fF.v:null, prevHeat: prev.heat,
+      doneH: doneSlots2*0.5, progPct: curSeg.hours>0? (doneSlots2*0.5)/curSeg.hours*100 : 0 };
+    core.advice = makeAdvice(core, CFG);
+  }
+
+  var ledger = rows.filter(function(r){ return isPast || (curIdx>=0 && r.i < curIdx); });
+  ledger.forEach(function(r){ r.adv = adviceOne(r, CFG); });
+
+  var lastMeter = (meter && meter.length)? meter[meter.length-1].v : null;
+  MODEL = { day:day, D0:D0, isCurDay:isCurDay, isPast:isPast, curIdx:curIdx, segs:segs, slots:slots,
+    rows:rows, segRows:segRows, curSeg:curSeg, curSegRow:curSegRow, core:core, carry:carry, ledger:ledger,
+    hourly:hourly, source:srcMode, mock:CFG.mock, errs:errs, health:health, now:now,
+    lastMeter:lastMeter, missing:missing, weatherAt:CFG.weather.fetchedAt,
+    yesterday: buildDaySettle(CFG, dayD) };
+  return MODEL;
+}
+
+function adviceOne(r, cfg){
+  if(!r.ok || r.devPct===null) return '缺数';
+  var d = r.devPct;
+  if(Math.abs(d)<=cfg.deadband) return '维持';
+  return (d>0? '超供':'欠供')+' '+Math.abs(d).toFixed(1)+'%';
+}
+function makeAdvice(core, cfg){
+  var out = { cls:'keep', title:'维持当前工况', main:'', items:[] };
+  var d = core.devPct, limit = cfg.tBoilerLimit, tB = core.tBoiler;
+  if(d===null){
+    out.title='等待数据';
+    out.main='本时段尚无可比对的完整半小时数据，待本段第一个半小时结算后给出调节建议。';
+    return out;
+  }
+  if(Math.abs(d)<=cfg.deadband){
+    out.title='维持当前工况（偏差 '+d.toFixed(1)+'%，在死区内）';
+    out.main='本时段已供热量与需热量进度匹配，暂不调整；继续按半小时节拍跟踪。';
+  } else if(d<0){
+    out.cls='under';
+    out.title='欠供 '+Math.abs(d).toFixed(1)+'% → 建议提高供热';
+    if(tB!==null && tB>=limit){
+      out.main='炉水温度已接近/达到限值 '+limit+'℃，本段优先走量调节：提高循环水泵频率约 '+cfg.stepFlow+'%，把热量送出去，避免继续抬升炉水温度。';
+      out.items.push('炉水温度 '+num(tB,1)+'℃ ≥ 限值 '+limit+'℃，质调节受限');
+    } else {
+      out.main='建议走质调节：锅炉出水温度上调约 '+cfg.stepT+'℃，使未来半小时供热功率向需求功率靠拢（当前 '+num(core.actKW,1)+' kW，需求 '+num(core.wantKW,1)+' kW）。';
+      out.items.push('单次修正不超过 ±'+cfg.capPct+'%，下一半小时复核一次');
+    }
+  } else {
+    out.cls='over';
+    out.title='超供 '+d.toFixed(1)+'% → 建议下调供热';
+    out.main='建议走质调节：锅炉出水温度下调约 '+cfg.stepT+'℃，或循环流量下调约 '+cfg.stepFlow+'%，把热量压回需求区间（当前 '+num(core.actKW,1)+' kW，需求 '+num(core.wantKW,1)+' kW）。';
+    out.items.push('超供部分按口径全额结转下一段，不必强行压太多');
+    out.items.push('单次修正不超过 ±'+cfg.capPct+'%');
+  }
+  out.items.push('本段剩余 '+num(core.row.leftH,1)+' 小时，剩余应供 '+num(core.row.left,1)+' kWh');
+  out.items.push('本段开始的结转（承接上一段）：'+(core.row.carry>=0? '欠供 ':'超供 ')+num(Math.abs(core.row.carry),1)+' kWh');
+  out.items.push('进行中的半小时尚未结算，其热量在下一节拍计入');
+  out.items.push('质/量调节分界暂不判定（炉水温度限值 '+limit+'℃，本采暖季只采集）');
+  return out;
+}
+
+function P(k,v,unit,cls){
+  return '<div class="p '+(cls||'')+'"><div class="k">'+k+'</div><div class="v">'+v+(unit?'<small>'+unit+'</small>':'')+'</div></div>';
+}
+// 编辑器式运行参数KPI：按来源取值。返回 {label,unit,badge,bc,val,cls}
+// 衍生来源：按公式 key 求值（复用 testCtx 上下文）
+function evalFormula(k, m, c){
+  try{
+    var v = evalExpr(CFG.formulas[k], testCtx());
+    return (v===null || v===undefined) ? '—' : Math.round(v*10)/10;
+  }catch(e){ return '—'; }
+}
+function kpiVal(kp, m, c){
+  var ctx = { m:m, c:c, tB:(m.core&&m.core.tBoiler!==null)? m.core.tBoiler : (m.rows.length? m.rows[m.rows.length-1].tBoiler : null),
+    fF:(m.core&&m.core.flow!==null)? m.core.flow : (m.rows.length? m.rows[m.rows.length-1].flow : null) };
+  ctx.doneAll = m.segRows.reduce(function(s,r){ return s+r.doneKWh; },0);
+  var R = { label:kp.label, unit:kp.unit, badge:kp.badge||'', bc:kp.bc||'', val:'—', cls:'' };
+  try{
+    if(kp.src==='reported' || kp.src==='var'){
+      // 上报：绑定平台上报点位（CFG.vars 实时值）
+      var kv = kp.var, vv = CFG.vars[kv];
+      if(kv==='tboiler'){ R.val = ctx.tB!==null? num(ctx.tB,1) : '—'; if(ctx.tB!==null&&ctx.tB>=c.tBoilerLimit) R.cls='hot'; }
+      else if(kv==='flow'){ R.val = ctx.fF!==null? num(ctx.fF,1) : '—'; }
+      else if(kv==='meter'||kv==='tout'){ R.val='—'; }
+    }
+    else if(kp.src==='upload' || kp.src==='cfg' || kp.src==='const'){
+      // 上传：绑定上传/常量变量 或 配置项
+      var key = kp.key, valOf = null;
+      if(key && key.indexOf('var:')===0){ var vk2=key.slice(4), v2=CFG.vars[vk2]; valOf = (v2.cls==='const')? num(c[vk2],1) : '—'; }
+      else if(key && key.indexOf('cfg:')===0){ valOf = num(c[key.slice(4)],1); }
+      else if(kp.val){ valOf = kp.val; }
+      R.val = valOf!==null? valOf : '—';
+    }
+    else if(kp.src==='derived' || kp.src==='calc'){
+      // 衍生：绑定公式结果 或 内建计算值
+      var k2 = kp.key;
+      if(k2 && k2.indexOf('dv:')===0){ R.val = evalFormula(k2.slice(3), m, c); }
+      else switch(k2){
+        case 'DAY':    R.val = m.day+' 09:00 起算'; break;
+        case 'CURSEG': R.val = m.curSeg? m.curSeg.k : (m.isCurDay? '—' : '非当前运营日'); if(m.curSeg) R.cls='ok'; break;
+        case 'PROG':   R.val = m.core? num(m.core.progPct,0)+'%' : '—'; break;
+        case 'WXNOW':  R.val = num(wxAt(c, m.hourly, m.curIdx>=0? m.curIdx*30+15 : 720),1); break;
+        case 'DONEALL':R.val = num(ctx.doneAll,1); R.cls='ok'; break;
+        case 'WXAT':   R.val = (m.weatherAt||'—').slice(5,16); break;
+      }
+    }
+  }catch(e){}
+  return R;
+}
+function renderKpis(m, c){
+  var o = '';
+  (c.kpis||[]).forEach(function(kp){
+    var r = kpiVal(kp, m, c);
+    var bd = r.badge? '<span class="bd '+r.bc+'">'+r.badge+'</span>' : '';
+    o += '<div class="p '+(r.cls||'')+'"><div class="k">'+r.label+bd+'</div><div class="v">'+r.val+(r.unit?'<small>'+r.unit+'</small>':'')+'</div></div>';
+  });
+  document.getElementById('paramBox').innerHTML = o;
+}
+function render(){
+  if(!MODEL) return;
+  var m = MODEL, c = CFG;
+  document.getElementById('verTag').textContent = VERSION;
+  document.getElementById('footVer').textContent = VERSION;
+  var _src="";
+  if(REPLAY) _src='真实回放';
+  else if(WALK.on&&m.source==='walk') _src='手动走查';
+  else if(m.mock) _src='模拟数据';
+  else if(m.source==='real') _src='实时取数';
+  else if(m.source==='unbound') _src='未绑定测点 · 模拟值';
+  else _src='取数失败 · 回退模拟';
+  var srcTxt = _src;
+  document.getElementById('srcTag').textContent = srcTxt;
+  document.getElementById('srcTag').className = 'tag '+(REPLAY? 'real':(m.mock? 'mock':(m.source==='real'?'real':'err')));
+  document.getElementById('cfgSrcTag').textContent = SERVERS[c.server].name+' · '+c.project;
+  document.getElementById('projInput').value = c.project;
+  document.getElementById('lastUpd').textContent = '数据时间 '+fmtISO(m.now).slice(0,16)+'　自动刷新 '+c.refreshSec+'s';
+
+  document.getElementById('paramSub').textContent = m.isCurDay? '当前运营日 · 半小时节拍' : (m.isPast? '历史运营日回看' : '未来运营日（无实际数据）');
+  renderKpis(m, c);
+
+  renderMain(m); renderCore(m); renderSettle(m); renderScatter(m); renderSegTable(m); renderLedger(m); renderWx(m);
+
+  if(m.errs && m.errs.length){
+    document.getElementById('chartHint').innerHTML = '<span class="bad">取数告警：'+m.errs.join('；')+'</span>';
+  } else {
+    document.getElementById('chartHint').textContent =
+      '窗口：'+WINS[c.winMode].name+'（前'+WINS[c.winMode].pre+'后'+WINS[c.winMode].post+'段，只影响视野，不参与结算）'
+      + (m.missing? '　·　本日有 '+m.missing+' 个半小时缺表底读数' : '');
+  }
+}
+function dayLabel(day){
+  if(day===0) return '';
+  return (day>0? '次日' : (day<0? '前日' : ''));
+}
+function dayLabel(day){
+  if(day===0) return '';
+  return (day>0? '次日' : '前日');
+}
+function buildWindow(m){
+  var segs=m.segs, curIdx=m.curIdx;
+  var pre=WINS[CFG.winMode].pre, post=WINS[CFG.winMode].post;
+  // 定位当前时段
+  var rIdx=0, c=0;
+  if(curIdx>=0){ for(var i=0;i<segs.length;i++){ if(curIdx>=c&&curIdx<c+segs[i].slots){rIdx=i;break;} c+=segs[i].slots; } }
+  else { rIdx=1; }
+  
+  // 窗口段序号：[rIdx-pre, rIdx+post]
+  // 段类型：g<0 用前日段，g>=5 用次日段
+  var slots=[];
+  var curSlotIdx=null;
+  var globalIdx=0;
+  
+  for(var g=rIdx-pre; g<=rIdx+post; g++){
+    var k=((g%5)+5)%5;
+    var sg=segs[k];
+    var dayOff=(g<0)? -1 : (g>=5)? +1 : 0;
+    var inDay=(dayOff===0);
+    // 当日该段的起始槽序号（0-47）
+    var daySegStartSlot=0;
+    if(inDay){ for(var qi=0; qi<k; qi++) daySegStartSlot += segs[qi].slots; }
+    
+    for(var s=0; s<sg.slots; s++){
+      // X 连续绝对轴：09:00起为0。前日段整体-1440、次日段整体+1440，
+      // 使 前/当日/后段 在时间轴上连续排布，不再互相重叠。
+      var offInDay = sg.start + s*30 + dayOff*1440;
+      // 外温按当日相对09:00的偏移取（取模归一化仅用于测点）
+      var tOut = wxAt(CFG, m.hourly, ((sg.start + s*30)%1440 + 1440)%1440);
+      var needKW = needKWOf(CFG, tOut);
+      var daySlotIdx = inDay? (daySegStartSlot + s) : null;
+      // 前日段（含凌晨夜表）供热柱：真实表底差（REPLAY_METER 覆盖 24日凌晨01:00起）
+      // 凌晨槽真实时间相对 01:00(D0-480min) 的半小时索引 = (offInDay+480)/30，
+      // 供热（前半小时） = REPLAY_METER[i+1]-REPLAY_METER[i]，hour=0.5 → actKW
+      var frontHeat = null, frontActKW = null, frontMeter = false;
+      if(dayOff<0 && REPLAY && REPLAY_METER && REPLAY_METER.length){ // REPLAY模式表底来自真实数组,非CFG.mock模拟
+        var fi = Math.round((offInDay + 480)/30);
+        if(fi>=0 && fi+1<REPLAY_METER.length){
+          var a=REPLAY_METER[fi], b=REPLAY_METER[fi+1];
+          if(b>=a){ frontHeat = b-a; frontActKW = frontHeat/0.5; frontMeter = true; }
+        }
+      }
+      
+      slots.push({
+        g:g, dayOff:dayOff, segIdx:k, seg:sg,
+        offInDay:offInDay, tOut:tOut, needKW:needKW,
+        inDay:inDay, daySlotIdx:daySlotIdx,
+        frontHeat:frontHeat, frontActKW:frontActKW, frontMeter:frontMeter,
+        globalIdx:globalIdx, label:''
+      });
+      
+      if(inDay && daySlotIdx===curIdx) curSlotIdx=globalIdx;
+      globalIdx++;
+    }
+  }
+  
+  // 生成标签：连续 X 轴上还原时钟（00:00起），跨日加"前日/次日"前缀
+  slots.forEach(function(w){
+    var lab = hmOf((w.offInDay + 540) % 1440);
+    if(w.dayOff!==0) lab = dayLabel(w.dayOff)+' '+lab;
+    w.label = lab;
+  });
+  
+  // 阶梯线修正：每个时段内的所有槽用该时段的平均需热
+  // 按 day+seg 分组，计算平均need，然后回填
+  var segGroups = {};
+  slots.forEach(function(w){
+    var key = w.dayOff+'|'+w.segIdx;
+    if(!segGroups[key]) segGroups[key] = { sum:0, count:0, slots:[] };
+    segGroups[key].sum += w.needKW;
+    segGroups[key].count++;
+    segGroups[key].slots.push(w);
+  });
+  // 当日段绿线使用含结转的时段需热功率（与结算表格H列对齐）；
+  // 前/后日仅视野展示，用该时段理论均值（无结转）。
+  // 当日段绿线使用含结转的时段需热功率（与结算表格H列对齐）；
+  // 前/后日仅视野展示，用该时段理论均值（无结转）。
+  var segNeedMap = {};
+  if(m.segRows) m.segRows.forEach(function(r){ segNeedMap[r.k] = r.segNeedKW; });
+  var needBySeg = {}, avgBySeg = {};
+  Object.keys(segGroups).forEach(function(key){
+    var g = segGroups[key];
+    var parts = key.split('|'), dayOff = +parts[0], segIdx = +parts[1];
+    var avg = g.sum / g.count;
+    avgBySeg[key] = avg;
+    // segIdx 是数字索引，转成该段字符串键（S1..S5）去 segNeedMap 查含结转绿线
+    var segK = (m.segs && m.segs[segIdx])? m.segs[segIdx].k : null;
+    var carryVal = (dayOff===0 && segK)? segNeedMap[segK] : null;
+    needBySeg[key] = (carryVal!=null)? carryVal : avg;
+  });
+  Object.keys(segGroups).forEach(function(key){
+    var val = needBySeg[key];
+    segGroups[key].slots.forEach(function(w){ w.needKW = val; });
+  });
+  
+  return { slots:slots, curSlotIdx:curSlotIdx, rIdx:rIdx };
+}
+function renderMain(m){
+  var el=document.getElementById('mainChart');
+  if(!window.echarts){ el.innerHTML='<div class="hint">图表库未加载</div>'; return; }
+  if(!CHART) CHART=echarts.init(el, null, {renderer:'canvas'});
+  var c=CFG, W=buildWindow(m);
+  var slots=W.slots, curSlotIdx=W.curSlotIdx;
+  
+  // x轴用分钟数（相对09:00），每个槽的x坐标是槽中间时刻
+  var need=[], bars=[], want=[], curMarkLine=null;
+  var bandAreas=[], bandLabels=[];
+  
+  // 按 day+seg 分组构建markArea（时段色带）
+  var segGroups={};
+  slots.forEach(function(w){
+    var key=w.dayOff+'|'+w.segIdx;
+    if(!segGroups[key]) segGroups[key]={dayOff:w.dayOff,segIdx:w.segIdx,segName:w.seg.name,slots:[]};
+    segGroups[key].slots.push(w);
+  });
+  Object.keys(segGroups).forEach(function(key){
+    var g=segGroups[key];
+    var firstOff=g.slots[0].offInDay; // 时段起始（第一个槽的起始）
+    var lastOff=g.slots[g.slots.length-1].offInDay + 30; // 时段结束（最后一个槽的结束）
+    var dayPrefix=g.dayOff? dayLabel(g.dayOff)+' ' : '';
+    bandAreas.push([{
+      xAxis:firstOff, name:dayPrefix+g.segName,
+      itemStyle:{color:(g.segIdx%2)? 'rgba(255,255,255,.030)':'rgba(0,162,154,.055)'},
+      label:{color:'rgba(219,231,242,.5)',fontSize:11,position:'insideTop',distance:2}
+    },{xAxis:lastOff}]);
+    bandLabels.push({name:dayPrefix+g.segName, from:firstOff, to:lastOff});
+  });
+  
+  // 需热曲线：折点踩在时段整点边界，值=该时段平均需热
+  // 每个时段在 [起始整点, 结束整点] 各放一个均值点，相邻时段边界共享点（值不同→垂直跳变在整点）
+  var needSegMap = segGroups; // 复用 renderMain 上方的 segGroups（day|segIdx → {slots, dayOff, segName...}）
+  Object.keys(needSegMap).forEach(function(key){
+    var g=needSegMap[key];
+    var startOff=g.slots[0].offInDay;           // 时段起始整点
+    var endOff=g.slots[g.slots.length-1].offInDay + 30; // 时段结束整点
+    var avg = Math.round(g.slots[0].needKW*10)/10; // 时段均值（buildWindow已均值化，取任一）
+    need.push([startOff, avg]);
+    // 每时段再加一个右边界点，确保阶梯平直覆盖整个时段
+    need.push([endOff, avg]);
+  });
+  
+  // 构建数据点（柱子/黄线/游标）
+  slots.forEach(function(w){
+    var xMid = w.offInDay + 15; // 槽中间时刻（分钟，15/45分）
+    // 供热柱：当日已结算槽（槽号<当前时刻，与窗口无关）+ 前日段凌晨夜表（真实表底，视为已结算）
+    var barVal=null, barColor=null;
+    if(w.inDay && w.daySlotIdx!==null && m.curIdx>=0 && w.daySlotIdx < m.curIdx){
+      var r=m.rows[w.daySlotIdx];
+      if(r && r.ok){ barVal=Math.round(r.actKW*10)/10; barColor = r.actKW>w.needKW? '#fd9644':'#4a90e2'; }
+    }
+    else if(w.frontMeter && w.frontActKW!=null){
+      // 凌晨夜表（前日S5/23日S5）：供热柱直接按真实表底差绘制
+      barVal = Math.round(w.frontActKW*10)/10;
+      barColor = (w.frontActKW>w.needKW)? '#fd9644':'#4a90e2';
+    }
+    if(barVal!=null && barColor){
+      bars.push({ value:[xMid, barVal], itemStyle:{color:barColor} });
+    }
+    // 剩余应供（当前时段内所有槽）
+    if(w.inDay && m.curSeg && m.curSeg.k===w.seg.k && m.curSegRow && m.curSegRow.wantKW){
+      want.push([xMid, Math.round(m.curSegRow.wantKW*10)/10]);
+    }
+    // 当前游标
+    if(curSlotIdx!==null && w.globalIdx===curSlotIdx){
+      curMarkLine = xMid;
+    }
+  });
+  
+  // 已完成段超欠标注
+  var mp=[];
+  m.segRows.forEach(function(r){
+    if(r.status!=='done'||r.devAmt===null) return;
+    var segWin=slots.filter(function(w){ return w.dayOff===0&&w.segIdx===m.segs.findIndex(function(s){return s.k===r.k;}); });
+    if(!segWin.length) return;
+    var last=segWin[segWin.length-1];
+    mp.push({coord:[last.offInDay+15, last.needKW*1.06],
+      value:(r.devAmt>=0?'超+':'欠-')+Math.round(Math.abs(r.devAmt))+'kWh',
+      itemStyle:{color:'transparent'}});
+  });
+  
+  need.sort(function(a,b){ return a[0]-b[0]; });
+  
+  // 柱宽 = 半小时(30分钟)对应的X轴像素宽度，保证柱子面积与曲线面积同口径
+  var barW = 28;
+  try{
+    var gW = (CHART.getWidth ? CHART.getWidth() : 800) - 56 - 26;
+    var xs = need.map(function(n){ return n[0]; });
+    if(bars.length){ bars.forEach(function(bb){ xs.push(bb.value[0]); }); }
+    if(want.length){ want.forEach(function(w2){ xs.push(w2[0]); }); }
+    var xmin=Math.min.apply(null,xs), xmax=Math.max.apply(null,xs);
+    var span=(xmax-xmin)||480;
+    barW = Math.max(6, Math.min(40, 30* gW / span));
+  }catch(e){ barW=28; }
+  
+  CHART.setOption({
+    backgroundColor:'transparent', animationDuration:400,
+    tooltip:{ trigger:'axis', axisPointer:{type:'cross'}, backgroundColor:'rgba(8,16,24,.94)',
+      borderColor:'rgba(255,255,255,.12)', textStyle:{color:'#dbe7f2',fontSize:12},
+      formatter:function(ps){
+        // 取数据点坐标的时间，柱子的值代表整点起始的半小时时段(如 9:00~9:30)
+        var xv=ps[0].value[0];
+        var t0=((xv+540)%1440+1440)%1440;       // 中心时间换算
+        // 属性中心在15/45分，向前回退到半小时的整点起始：若中心分钟=15则起始=整点；若=45则起始=:30
+        var midMM=t0%60, h0=t0-Math.floor(t0/60)*60;
+        var startT = t0 - (t0%30===15? 15 : 15); // 中心-15=该半小时起始
+        startT=((startT+1440)%1440);
+        var hh=Math.floor(startT/60), mm=startT%60;
+        var endT=(startT+30)%1440, hh2=Math.floor(endT/60), mm2=endT%60;
+        var lines=[pad(hh)+':'+pad(mm)+'~'+pad(hh2)+':'+pad(mm2)];
+        ps.forEach(function(p){
+          if(p.seriesName==='实际供热'){ lines.push('实际供热：'+p.value[1]+' kW'); }
+          else if(p.seriesName==='24小时需热'){ lines.push('需热：'+p.value[1]+' kW'); }
+          else if(p.seriesName==='剩余应供需求'){ lines.push('应供：'+p.value[1]+' kW'); }
+        });
+        return lines.join('<br/>');
+      } },
+    legend:{ data:['24小时需热','剩余应供需求','实际供热'], top:0, right:6, textStyle:{color:'#8fa4b8',fontSize:11} },
+    grid:{ left:56, right:26, top:30, bottom:34 },
+    xAxis:{ type:'value', name:'时刻', nameTextStyle:{color:'#6b8098',fontSize:10},
+      min:function(v){ return Math.floor(v.min/60)*60; },   // 对齐整点
+      max:function(v){ return Math.ceil(v.max/60)*60; },    // 对齐整点
+      axisLabel:{ color:'#8fa4b8', fontSize:11, interval:60,
+        formatter:function(v){ var t=(v+540)%1440; return pad(Math.floor(t/60))+':'+pad(t%60); } },
+      axisLine:{lineStyle:{color:'rgba(255,255,255,.16)'}},
+      splitLine:{show:false},
+      axisTick:{show:false} },
+    yAxis:{ type:'value', name:'kW', nameTextStyle:{color:'#6b8098',fontSize:11},
+      axisLabel:{color:'#8fa4b8',fontSize:11}, splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
+    series:[
+      { name:'24小时需热', type:'line', data:need, symbol:'none', z:4, step:'end',
+        lineStyle:{width:2,color:'#00A29A'}, itemStyle:{color:'#00A29A'},
+        markArea:{silent:true,data:bandAreas},
+        markPoint: mp.length? {silent:true,symbol:'circle',symbolSize:0,label:{color:'#ffcf9e',fontSize:11,fontWeight:'bold'},data:mp} : undefined,
+        markLine: curMarkLine!==null? {silent:true,symbol:'none',data:[{xAxis:curMarkLine}],
+          lineStyle:{color:'rgba(245,166,35,.85)',type:'dashed',width:1},
+          label:{formatter:'当前',color:'#f5a623',fontSize:11}} : undefined },
+      { name:'剩余应供需求', type:'line', data:want, symbol:'none', z:5, connectNulls:false,
+        lineStyle:{width:3,color:'#f5a623'}, itemStyle:{color:'#f5a623'} },
+      { name:'实际供热', type:'bar', data:bars, z:3, barWidth:barW, itemStyle:{borderRadius:0} }
+    ]
+  }, true);
+  CHART.resize();
+}
+function renderCore(m){
+  var box = document.getElementById('coreBox'), ab = document.getElementById('adviceBox');
+  var core = m.core, row = m.curSegRow;
+  document.getElementById('segSub').textContent = core? (core.seg.k+' '+core.seg.name.replace(/^S\d /,'')+'　'+core.seg.startHM+'–'+core.seg.endHM) : '当前无进行中的时段';
+  if(!core){
+    box.innerHTML = '<div class="hint">当前运营日没有进行中的时段（历史日回看或未来日未开始）。</div>';
+    ab.innerHTML = ''; return;
+  }
+  var o = '';
+  o += P('本段净需热', num(row.netKW*row.hours,1), 'kWh');
+  o += P('上时段结转', (row.carry>=0?'欠供 ':'超供 ')+num(Math.abs(row.carry),1), 'kWh');
+  o += P('时段需热功率(绿线)', num(row.segNeedKW,1), 'kW');
+  o += P('本段应供合计(含结转)', num(row.needKWh,1), 'kWh');
+  o += P('本段已供', num(row.doneKWh,1), 'kWh', 'ok');
+  o += P('本段剩余应供', num(row.left,1), 'kWh', 'warnb');
+  o += P('剩余时间', num(row.leftH,2), 'h');
+  o += P('当前需热功率(黄线)', row.wantKW!==null? num(row.wantKW,1):'—', 'kW');
+  o += P('前半小时实际功率', core.actKW!==null? num(core.actKW,1):'—', 'kW');
+  o += P('偏差率', core.devPct!==null? (core.devPct>0?'+':'')+num(core.devPct,1)+'%':'—', '', Math.abs(core.devPct||0)>CFG.deadband? 'hot':'ok');
+  o += P('前半小时热量', num(core.prevHeat,1), 'kWh');
+  box.innerHTML = o;
+  var ad = core.advice;
+  ab.innerHTML = '<div class="advice '+ad.cls+'"><div class="hd"><b>'+ad.title+'</b><span class="tag ro">文字建议 · 不下发</span></div>'
+    + '<div class="txt">'+ad.main+'</div>'
+    + ((ad.items&&ad.items.length)? '<ul>'+ad.items.map(function(t){ return '<li>'+t+'</li>'; }).join('')+'</ul>' : '')
+    + '</div>';
+}
+function renderSettle(m){
+  var y = m.yesterday || { segRows:[], need:0, done:0, dev:0, devP:0, carry:0, day:'—' };
+  var o = '';
+  o += P('昨日运营日', y.day+' 09:00 起算');
+  o += P('昨日需热合计', num(y.need,1), 'kWh');
+  o += P('昨日实际供热', num(y.done,1), 'kWh', 'ok');
+  o += P('偏差量', (y.dev>0?'+':'')+num(y.dev,1), 'kWh', Math.abs(y.devP)>5? 'hot':'');
+  o += P('偏差率', y.need>0? (y.dev>0?'+':'')+num(y.devP,1)+'%':'—', '', Math.abs(y.devP)>5? 'hot':'ok');
+  o += P('昨日末结转', (y.carry>=0?'欠供 ':'超供 ')+num(Math.abs(y.carry),1), 'kWh', 'warnb');
+  o += P('时段结算', y.segRows.length+' 段全部完成');
+  document.getElementById('settleBox').innerHTML = o;
+  document.getElementById('settleHint').textContent = '口径：昨日实际供热 − 昨日需热 = 偏差量（正超供、负欠供）；昨日为完整运营日，五个时段全部结算，段末结转计入下一段应供、次日09:00清零。';
+}
+var PTS_MAIN='rgba(0,162,154,.85)', PTS_BORDER='rgba(0,162,154,.35)'; // 炉水 青
+var PTS_MAIN2='rgba(245,166,35,.9)', PTS_BORDER2='rgba(245,166,35,.45)';  // 循环水量 橙
+function scatterOption(xname, yname, pts, markLine, main, border){
+  if(!main){ main=PTS_MAIN; border=PTS_BORDER; }
+  return { backgroundColor:'transparent',
+    tooltip:{ backgroundColor:'rgba(8,16,24,.94)', borderColor:'rgba(255,255,255,.12)', textStyle:{ color:'#dbe7f2', fontSize:12 },
+      formatter:function(p){ return p.value[2]+' 功率 '+p.value[0]+' kW  '+yname+' '+p.value[1]+(yname.indexOf('\u2103')>=0?' \u2103':' m\u00b3/h'); } },
+    grid:{ left:56, right:20, top:18, bottom:34 },
+    xAxis:{ type:'value', name:'实际功率 kW', nameTextStyle:{ color:'#6b8098', fontSize:11 },
+      axisLabel:{ color:'#8fa4b8', fontSize:11 }, splitLine:{ lineStyle:{ color:'rgba(255,255,255,.06)' } }, scale:true },
+    yAxis:{ type:'value', name:yname, nameTextStyle:{ color:'#6b8098', fontSize:11 },
+      axisLabel:{ color:'#8fa4b8', fontSize:11 }, splitLine:{ lineStyle:{ color:'rgba(255,255,255,.06)' } }, scale:true },
+    series:[{ type:'scatter', data:pts, symbolSize:8,
+      itemStyle:{ color:PTS_MAIN, borderColor:PTS_BORDER },
+      markLine: markLine }] };
+}
+function renderScatter(m){
+  var el = document.getElementById('scChart');
+  if(!window.echarts){ el.innerHTML='<div class="hint">图表库未加载</div>'; return; }
+  if(!SCCHART) SCCHART = echarts.init(el, null, { renderer:'canvas' });
+  var pts = m.ledger.filter(function(r){ return r.ok && r.tBoiler!==null; })
+    .map(function(r){ return { value:[Math.round(r.actKW*10)/10, Math.round(r.tBoiler*10)/10, r.label] }; });
+  SCCHART.setOption(scatterOption('实际功率 kW','炉水温度 \u2103', pts,
+    { silent:true, symbol:'none', data:[{ yAxis:CFG.tBoilerLimit, lineStyle:{ color:'rgba(255,107,107,.7)', type:'dashed' },
+      label:{ formatter:'限值 '+CFG.tBoilerLimit+'\u2103', color:'#ff9b9b', fontSize:11 } } ] }), true);
+  SCCHART.resize();
+  var el2 = document.getElementById('scChart2');
+  if(!el2) return;
+  if(!SCCHART2) SCCHART2 = echarts.init(el2, null, { renderer:'canvas' });
+  var pts2 = m.ledger.filter(function(r){ return r.ok && r.flow!==null; })
+    .map(function(r){ return { value:[Math.round(r.actKW*10)/10, Math.round(r.flow*10)/10, r.label] }; });
+  SCCHART2.setOption(scatterOption('实际功率 kW','循环水量 m\u00b3/h', pts2, undefined, PTS_MAIN2, PTS_BORDER2), true);
+  SCCHART2.resize();
+}
+function statusText(s){ return s==='done'? '已完成' : (s==='cur'? '进行中':'未开始'); }
+function renderSegTable(m){
+  var h = '<thead><tr><th>时段</th><th>时间</th><th>时长 h</th><th>预报外温均值 ℃</th><th>段需热 kWh</th>'
+    + '<th>段初结转 kWh</th><th>今日结转累计 kWh</th><th>实际供热 kWh</th><th>偏差 kWh</th><th>偏差率（进行中=进度偏差）</th><th>剩余应供 kWh</th><th>状态</th></tr></thead><tbody>';
+  m.segRows.forEach(function(r){
+    var cls = r.status==='cur'? 'cur' : (r.status==='done'? 'done':'wait');
+    var sg = null;
+    m.segs.forEach(function(x){ if(x.k===r.k) sg=x; });
+    h += '<tr class="'+cls+'"><td>'+r.k+' '+r.name.replace(/^S\d /,'')+'</td><td>'+sg.startHM+'–'+sg.endHM+'</td>'
+      + '<td>'+num(r.hours,1)+'</td><td>'+num(r.tOutAvg,1)+'</td><td>'+num(r.needKWh,1)+'</td>'
+      + '<td>'+num(r.carryStart,1)+'</td>'
+      + '<td>'+num(r.carry,1)+'</td><td>'+num(r.doneKWh,1)+'</td>'
+      + '<td class="'+(r.devAmt>0?'pos':'neg')+'">'+(r.devAmt>0?'+':'')+num(r.devAmt,1)+'</td>'
+      + '<td>'+ (r.devPct!==null? (r.devPct>0?'+':'')+num(r.devPct,1)+'%' : (r.progDevPct!==null? (r.progDevPct>0?'+':'')+num(r.progDevPct,1)+'%':'—')) +'</td>'
+      + '<td>'+ (r.status==='cur'? num(r.left,1) : '—') +'</td><td>'+statusText(r.status)+'</td></tr>';
+  });
+  document.getElementById('segTable').innerHTML = h+'</tbody>';
+}
+function renderLedger(m){
+  var h = '<thead><tr><th>时间</th><th>实际功率 kW</th><th>半小时热量 kWh</th><th>累计表底 kWh</th>'
+    + '<th>炉水温度 ℃</th><th>循环水量 m³/h</th><th>预报外温 ℃</th><th>时段需热功率(绿线) kW</th><th>当前需热功率(黄线) kW</th><th>偏差率</th><th>台账建议</th></tr></thead><tbody>';
+  m.ledger.slice(-72).forEach(function(r){
+    h += '<tr><td>'+r.label+'–'+r.endLabel+'</td>'
+      + '<td>'+(r.actKW===null?'—':num(r.actKW,1))+'</td>'
+      + '<td>'+(r.heat===null?'—':num(r.heat,1))+'</td>'
+      + '<td>'+(r.cum===null?'—':num(r.cum,1))+'</td>'
+      + '<td>'+(r.tBoiler===null?'—':num(r.tBoiler,1))+'</td>'
+      + '<td>'+(r.flow===null?'—':num(r.flow,1))+'</td>'
+      + '<td>'+num(r.tOut,1)+'</td><td>'+num(r.needKW,1)+'</td><td>'+(r.wantKW===null||r.wantKW===undefined?'—':num(r.wantKW,1))+'</td>'
+      + '<td class="'+(r.devPct===null?'':(r.devPct>0?'pos':'neg'))+'">'+(r.devPct===null?'缺数':(r.devPct>0?'+':'')+num(r.devPct,1)+'%')+'</td>'
+      + '<td>'+r.adv+'</td></tr>';
+  });
+  document.getElementById('ledgerTable').innerHTML = h+'</tbody>';
+}
+
+// ==== 预报外温本次预测折线图（24h，每时段边界更新）====
+function renderWx(m){
+  var el = document.getElementById('wxChart');
+  if(!el) return;
+  var sub = document.getElementById('wxSub');
+  var wx = (CFG && CFG.weather && CFG.weather.hourly) ? CFG.weather.hourly : null;
+  var at = (CFG && CFG.weather && CFG.weather.fetchedAt) ? CFG.weather.fetchedAt : null;
+  if(!wx || !wx.length){
+    if(sub) sub.textContent = '未拉取 · 配置页填天气接口地址';
+    if(window.echarts && WXCHART){ WXCHART.clear(); }
+    return;
+  }
+  if(sub) sub.textContent = '本次拉取：'+(at? at.slice(0,16).replace('T',' ') : '—') + '（共 '+wx.length+' 小时预报）';
+  if(!window.echarts){ return; }
+  if(!WXCHART) WXCHART = echarts.init(el, null, { renderer:'canvas' });
+  // 横轴：09:00 起 24 小时（对齐运营日日界）
+  var cats = [], data = [];
+  var D0 = m && m.D0 ? m.D0 : new Date();
+  for(var i=0;i<wx.length;i++){
+    // 横轴从运营日 09:00 起（hourly[0] 就是当天09:00预报）
+    cats.push(hmOf(9*60 + i*60));
+    data.push(wx[i]);
+  }
+  var opts = {
+    backgroundColor:'transparent',
+    grid:{ left:44, right:16, top:16, bottom:24 },
+    tooltip:{ trigger:'axis', valueFormatter:(function(){ return function(v){ return v+' ℃'; }; })() },
+    xAxis:{ type:'category', data:cats, axisLabel:{ color:'#8fa4b8', fontSize:10 },
+      axisLine:{ lineStyle:{ color:'rgba(255,255,255,.12)' } } },
+    yAxis:{ type:'value', name:'℃', nameTextStyle:{ color:'#8fa4b8' },
+      axisLabel:{ color:'#8fa4b8', fontSize:10 }, splitLine:{ lineStyle:{ color:'rgba(255,255,255,.06)' } } },
+    series:[{ type:'line', data:data, smooth:true, symbol:'circle', symbolSize:5,
+      lineStyle:{ color:'#8ff0e8', width:2 }, itemStyle:{ color:'#8ff0e8' },
+      areaStyle:{ color:{ type:'linear', x:0,y:0,x2:0,y2:1,
+        colorStops:[{offset:0,color:'rgba(143,240,232,.25)'},{offset:1,color:'rgba(143,240,232,0)'}] } } }]
+  };
+  WXCHART.setOption(opts, true);
+  WXCHART.resize();
+}
+
+var VARDICT = [];
+function uniq(a){ var o=[],m={}; a.forEach(function(x){ if(x&&!m[x]){ m[x]=1; o.push(x); } }); return o; }
+var CLS_NAME = { reported:'上报', derived:'衍生', upload:'上传', const:'上传（常量）' };
+function openCfg(){
+  document.getElementById('cfProj').value = CFG.project;
+  document.getElementById('cfArea').value = CFG.area;
+  document.getElementById('cfQ').value = CFG.qTarget;
+  document.getElementById('cfTBase').value = CFG.tBase;
+  document.getElementById('cfTIn').value = CFG.tIn;
+  document.getElementById('cfTLimit').value = CFG.tBoilerLimit;
+  document.getElementById('cfDead').value = CFG.deadband;
+  document.getElementById('cfStepT').value = CFG.stepT;
+  document.getElementById('cfStepF').value = CFG.stepFlow;
+  document.getElementById('cfCap').value = CFG.capPct;
+  document.getElementById('cfRef').value = CFG.refreshSec;
+  document.getElementById('cfWxSrc').value = CFG.weather.source;
+  document.getElementById('cfWxIv').value = CFG.weather.interval;
+  document.getElementById('cfWxUrl').value = CFG.weather.url || '';
+  document.getElementById('cfWxHourly').value = (CFG.weather.hourly||[]).join(',');
+  document.getElementById('cfWxAt').textContent = CFG.weather.fetchedAt || '—';
+  document.getElementById('cfServer').value = CFG.server;
+  document.getElementById('cfMock').value = CFG.mock? '1':'0';
+  document.getElementById('cfBase').value = SERVERS[CFG.server].base;
+  renderCfgGlossary();
+  renderCfgPeriods(); renderCfgVars(); renderCfgFormulas(); renderBindStatus(); renderCfgKpis();
+  document.getElementById('cfgSrcTag').textContent = SERVERS[CFG.server].name+' · '+CFG.project;
+  document.getElementById('cfgMask').classList.remove('hidden');
+  setTab(0);
+}
+function renderCfgGlossary(){
+  var g = CFG.glossary || {};
+  var areaTxt = '';
+  (CFG.stopTable||[]).forEach(function(r){
+    areaTxt += '<tr><td>'+(r.p*100).toFixed(0)+'%</td><td>'+r.k+'</td></tr>';
+  });
+  var heatArea = '供热面积 = (供暖面积) + (停暖面积×折算系数)；当前停暖率 '+((CFG.stopRate||0.2)*100).toFixed(0)+'%，折算系数取插值表';
+  var h = ''
+    + '<div class="gitem"><b>绿线 · 需热功率（本时段整段目标，段内恒定）</b>'+(g.needKW||'')+'</div>'
+    + '<div class="gitem"><b>黄线 · 当前应供功率（本时刻该供多少，每半小时刷新）</b>'+(g.wantKW||'')+'</div>'
+    + '<div class="gitem"><b>时段结转（时段基准 · 24h清零）</b>'+(g.segCarry||'')+'</div>'
+    + '<div class="gitem"><b>段内结转（半小时基准 · 黄线依据）</b>'+(g.slotCarry||'')+'</div>'
+    + '<div class="gitem"><b>供热面积（折算系数查表）</b>'+heatArea
+    + '<table class="k T"><thead><tr><th>停暖率</th><th>折算系数</th></tr></thead><tbody>'+areaTxt+'</tbody></table></div>'
+    + '<div class="gitem"><b>各变量计算公式（文字版）</b><br/>'
+    + '· 段内均温 = 本时段内各预报时刻外温的算术平均；<br/>'
+    + '· 需热功率(绿线) = 供热面积×16×(20−段内均温)÷20；<br/>'
+    + '· 时段需热总量 = 需热功率×时段时长 + 上时段结转（24h清零）；<br/>'
+    + '· 半小时实际供热 = 最近表底 − 半小时前表底（两表之和）；<br/>'
+    + '· 段内结转 = 每半小时 (应供−实际) 累计，段末并入时段结转；<br/>'
+    + '· 剩余供热量 = 时段需热总量 − 段内已实际供热 + 段内结转（到此刻）；<br/>'
+    + '· 当前应供(黄线) = 剩余供热量 ÷ 剩余小时；<br/>'
+    + '· 时段偏差 = (实际供热 − 需热) ÷ 需热（对绿线）；<br/>'
+    + '· 半小时偏差 = (实际 − 应供) ÷ 应供（对黄线）。</div>';
+  var el = document.getElementById('cfGlossary');
+  if(el) el.innerHTML = h;
+}
+function renderCfgPeriods(){
+  var segs = segsOf(CFG);
+  var h = '<thead><tr><th>时段</th><th>名称</th><th>开始</th><th>结束（可跨零点）</th><th>时长 h</th></tr></thead><tbody>';
+  CFG.periods.forEach(function(p,i){
+    h += '<tr><td>'+p.k+'</td>'
+      + '<td><input data-p="'+i+'" data-f="name" value="'+p.name+'"/></td>'
+      + '<td><input data-p="'+i+'" data-f="start" value="'+p.start+'" style="width:64px"/></td>'
+      + '<td><input data-p="'+i+'" data-f="end" value="'+p.end+'" style="width:64px"/></td>'
+      + '<td class="code">'+(segs[i]? segs[i].hours.toFixed(1):'—')+'</td></tr>';
+  });
+  var tb = document.getElementById('cfPeriods');
+  tb.innerHTML = h+'</tbody>';
+  tb.oninput = function(e){
+    var el = e.target;
+    if(!el.dataset || el.dataset.f===undefined) return;
+    CFG.periods[Number(el.dataset.p)][el.dataset.f] = el.value;
+    renderCfgPeriods();
+  };
+}
+function renderCfgVars(){
+  var h = '<thead><tr><th>变量</th><th>数据类别</th><th>设备 / 变量</th><th>测点 / 名称</th><th>单位</th><th>状态</th></tr></thead><tbody>';
+  var clsKeys = Object.keys(CLS_NAME);
+  for(var k in CFG.vars){
+    var v = CFG.vars[k];
+    h += '<tr><td>'+v.label+'</td>'
+      + '<td><select data-vk="'+k+'" data-vf="cls">'
+      + clsKeys.map(function(c){ return '<option value="'+c+'"'+(v.cls===c?' selected':'')+'>'+CLS_NAME[c]+'</option>'; }).join('')
+      + '</select></td>'
+      + '<td><input data-vk="'+k+'" data-vf="device" value="'+(v.device||'')+'" list="devList" placeholder="device_id"/></td>'
+      + '<td><input data-vk="'+k+'" data-vf="point" value="'+(v.point||'')+'" list="ptList" placeholder="point_name"/></td>'
+      + '<td><input data-vk="'+k+'" data-vf="unit" value="'+(v.unit||'')+'" style="width:64px"/></td>'
+      + '<td>'+(v.device&&v.point? '<span class="tag real">已绑定</span>':'<span class="tag">未绑定</span>')+'</td></tr>';
+  }
+  var tb = document.getElementById('cfVars');
+  tb.innerHTML = h+'</tbody>'
+    + '<datalist id="devList">'+uniq(VARDICT.map(function(x){ return x.device_id; })).map(function(d){ return '<option value="'+d+'">'; }).join('')+'</datalist>'
+    + '<datalist id="ptList">'+uniq(VARDICT.map(function(x){ return x.point_name; })).slice(0,500).map(function(d){ return '<option value="'+d+'">'; }).join('')+'</datalist>';
+  tb.oninput = function(e){
+    var el = e.target;
+    if(!el.dataset || el.dataset.vk===undefined) return;
+    CFG.vars[el.dataset.vk][el.dataset.vf] = el.value;
+  };
+  tb.onchange = function(e){
+    var el = e.target;
+    if(el.tagName==='SELECT' && el.dataset.vk){ CFG.vars[el.dataset.vk].cls = el.value; renderCfgVars(); renderBindStatus(); }
+    if(el.tagName==='INPUT') renderBindStatus();
+  };
+}
+function renderBindStatus(){
+  var s = [], n = 0;
+  for(var k in CFG.vars){
+    var v = CFG.vars[k];
+    if(v.cls==='const'){ s.push(v.label+'：常量（手工填 '+v.unit+'，当前 '+num(CFG.area,1)+'）'); continue; }
+    if(v.device && v.point){ n++; s.push('<span style="color:#8ff0e8">✓ '+v.label+'：'+v.device+' / '+v.point+'</span>'); }
+    else s.push('<span style="color:#ffb0b0">✗ '+v.label+'：未绑定（'+CLS_NAME[v.cls]+'）</span>');
+  }
+  document.getElementById('bindStatus').innerHTML = s.join('<br/>')
+    + '<br/>共 '+n+' 个时序变量已绑定；未绑定变量在「模拟数据」关闭时按缺数处理。';
+}
+// ═══ 运行参数KPI 编辑器（仿驾驶舱编辑器KPI） ═══
+function esc(str){ return String(str==null?'':str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// 运行参数KPI数据来源 —— 与平台编辑器一致：上报 / 上传 / 衍生
+// reported=平台上报点位(vars中cls='reported') | upload=上传/常量(vars中cls='upload/const'+配置项) | derived=衍生(公式+内建计算)
+var KPI_SRC = [['reported','上报'],['upload','上传'],['derived','衍生']];
+var KPI_CALC = [['DAY','运营日'],['CURSEG','当前时段'],['PROG','时段内进度'],['WXNOW','预报外温(当前)'],['DONEALL','今日实际供热量'],['WXAT','预报取数时间']];
+function renderCfgKpis(){
+  var kpis = CFG.kpis || (CFG.kpis=[]);
+  var h = '<thead><tr><th>标题</th><th>单位</th><th>标签</th><th>标签色</th><th>数据来源</th><th>绑定项目</th><th></th></tr></thead><tbody>';
+  kpis.forEach(function(kp,i){
+    h += '<tr>'
+      + '<td><input data-ki="'+i+'" data-f="label" value="'+esc(kp.label||'')+'" style="width:110px"/></td>'
+      + '<td><input data-ki="'+i+'" data-f="unit" value="'+esc(kp.unit||'')+'" style="width:44px"/></td>'
+      + '<td><input data-ki="'+i+'" data-f="badge" value="'+esc(kp.badge||'')+'" placeholder="实时/昨日/当前" style="width:70px"/></td>'
+      + '<td><select data-ki="'+i+'" data-f="bc">'
+      + [['','无'],['yesterday','昨日灰'],['realtime','实时绿'],['current','当前蓝'],['now','现在橙']].map(function(c){ return '<option value="'+c[0]+'"'+(kp.bc===c[0]?' selected':'')+'>'+c[1]+'</option>'; }).join('')
+      + '</select></td>'
+      + '<td><select data-ki="'+i+'" data-f="src" style="width:88px">'
+      + KPI_SRC.map(function(s2){ return '<option value="'+s2[0]+'"'+(kp.src===s2[0]?' selected':'')+'>'+s2[1]+'</option>'; }).join('')
+      + '</select></td>'
+      + bindCell(kp,i)
+      + '<td><button class="mini-btn" data-move="-1" data-ki="'+i+'">↑</button> <button class="mini-btn" data-move="1" data-ki="'+i+'">↓</button> <button class="mini-btn del" data-del="'+i+'">✕</button></td>'
+      + '</tr>';
+  });
+  var tb = document.getElementById('cfKpis');
+  tb.innerHTML = h+'</tbody>';
+  tb.oninput = function(e){
+    var el=e.target; if(!el.dataset||el.dataset.ki===undefined||!el.dataset.f) return;
+    kpis[Number(el.dataset.ki)][el.dataset.f]=el.value;
+    if(el.dataset.f==='src'){ renderCfgKpis(); }
+  };
+  tb.onchange = function(e){
+    var el=e.target; if(!el.dataset||el.dataset.ki===undefined) return;
+    kpis[Number(el.dataset.ki)][el.dataset.f]=el.value;
+    if(el.dataset.f==='src'){ kpis[Number(el.dataset.ki)].key=''; kpis[Number(el.dataset.ki)].var=''; kpis[Number(el.dataset.ki)].val=''; renderCfgKpis(); }
+  };
+  tb.onclick = function(e){
+    var t=e.target, m=(t.closest?t.closest('[data-move]'):null), d=(t.closest?t.closest('[data-del]'):null);
+    if(m){ var i=Number(m.dataset.ki),dir=Number(m.dataset.move),j=i+dir; if(j>=0&&j<kpis.length){ var tmp=kpis[i]; kpis[i]=kpis[j]; kpis[j]=tmp; renderCfgKpis(); } }
+    else if(d){ kpis.splice(Number(d.dataset.del),1); renderCfgKpis(); }
+  };
+  var hint=[];
+  kpis.forEach(function(kp){
+    hint.push('<b>'+esc(kp.label||'未命名')+'</b>('+KPISRC_NAME[kp.src||'']+')');
+  });
+  document.getElementById('kpiHint').innerHTML = hint.length? ('已配置 '+kpis.length+' 张 KPI 卡：'+hint.join('、')) : '尚未配置任何 KPI 卡；点「＋ 添加 KPI 卡」或在「恢复默认」后自动生成 10 张默认卡。';
+}
+var KPISRC_NAME = { reported:'上报', upload:'上传', derived:'衍生' };
+function bindCell(kp,i){
+  if(kp.src==='reported'){
+    // 上报：绑定平台上报点位（CFG.vars 中 cls='reported'，device/point）
+    var opts = Object.keys(CFG.vars||{}).filter(function(vk){ return CFG.vars[vk].cls==='reported'; })
+      .map(function(vk){ var v=CFG.vars[vk]; return '<option value="'+vk+'"'+(kp.var===vk?' selected':'')+'>'+esc(v.label)+(v.device&&v.point?('·'+v.device+'/'+v.point):'')+'</option>'; }).join('');
+    if(!opts) return '<td><span class="hint">无上报点位，请先在「② 变量绑定」配置</span></td>';
+    return '<td><select data-ki="'+i+'" data-f="var" style="width:200px">'+opts+'</select></td>';
+  }
+  if(kp.src==='upload'){
+    // 上传：绑定上传/常量变量 + 配置项
+    var up = Object.keys(CFG.vars||{}).filter(function(vk){ var c=CFG.vars[vk].cls; return c==='upload'||c==='const'; })
+      .map(function(vk){ var v=CFG.vars[vk]; return '<option value="var:'+vk+'"'+(kp.key==='var:'+vk?' selected':'')+'>'+esc(v.label)+'</option>'; }).join('');
+    var cfgs=[['cfg:tBoilerLimit','炉水温度限值'],['cfg:area','实供面积'],['cfg:qTarget','单位热指标'],['cfg:tIn','室内基准温度'],['cfg:tBase','基准温差'],['cfg:deadband','死区'],['cfg:stepT','出水步进'],['cfg:stepFlow','流量步进']];
+    var opts2=cfgs.map(function(c){ return '<option value="'+c[0]+'"'+(kp.key===c[0]?' selected':'')+'>'+c[1]+'（配置）</option>'; }).join('');
+    return '<td><select data-ki="'+i+'" data-f="key" style="width:200px">'+up+opts2+'</select></td>';
+  }
+  // derived：绑定公式结果 + 内建计算值
+  var fml = FML_DEF.map(function(f){ return '<option value="dv:'+f.k+'"'+(kp.key==='dv:'+f.k?' selected':'')+'>'+esc(f.name)+'（公式）</option>'; }).join('');
+  var opts3=KPI_CALC.map(function(c){ return '<option value="'+c[0]+'"'+(kp.key===c[0]?' selected':'')+'>'+c[1]+'（内建）</option>'; }).join('');
+  return '<td><select data-ki="'+i+'" data-f="key" style="width:200px">'+fml+opts3+'</select></td>';
+}
+function renderCfgFormulas(){
+  var h = '<thead><tr><th>结果</th><th>公式</th><th>试算</th></tr></thead><tbody>';
+  FML_DEF.forEach(function(f){
+    h += '<tr><td>'+f.name+'<div class="res">'+f.k+'</div></td>'
+      + '<td><input class="code" data-fk="'+f.k+'" value="'+(CFG.formulas[f.k]||'')+'" style="width:100%"/></td>'
+      + '<td><button class="btn sm" data-test="'+f.k+'">试算</button><div class="res" id="tr_'+f.k+'">—</div></td></tr>';
+  });
+  var tb = document.getElementById('cfFormulas');
+  tb.innerHTML = h+'</tbody>';
+  tb.oninput = function(e){ var el=e.target; if(el.dataset && el.dataset.fk) CFG.formulas[el.dataset.fk]=el.value; };
+  tb.onclick = function(e){
+    var t = e.target, b = (t.closest? t.closest('[data-test]') : null);
+    if(!b) return;
+    testOne(b.getAttribute('data-test'));
+  };
+  document.getElementById('varListHint').innerHTML =
+    'area='+CFG.area+'，qTarget='+CFG.qTarget+'，tIn='+CFG.tIn+'，tOut（该半小时预报外温），tOutAvg（段平均外温），tBase='+CFG.tBase
+    +'，tBoilerLimit='+CFG.tBoilerLimit+'，tBoiler（实时炉温），flow（循环水量），deadband='+CFG.deadband
+    +'，stepT='+CFG.stepT+'，stepFlow='+CFG.stepFlow+'，capPct='+CFG.capPct
+    +'，halfH=0.5，segH（段时长），meterBeg / meterEnd（半小时首尾表底），'
+    +'中间结果 needKW / actualKW / devPct / segNeedKWh / segDone / carry / leftNeed / leftH / wantKW 可用于后续公式。';
+}
+function testCtx(){
+  var m = MODEL, r = (m && m.rows && m.rows.length)? m.rows[m.rows.length-1] : null;
+  return {
+    area:CFG.area, qTarget:CFG.qTarget, tIn:CFG.tIn,
+    tOut: r? r.tOut : 5, tOutAvg: r? r.tOut : 5, tBase:CFG.tBase,
+    tBoilerLimit:CFG.tBoilerLimit, tBoiler: (r&&r.tBoiler!==null)? r.tBoiler : 55,
+    flow: (r&&r.flow!==null)? r.flow : 64,
+    deadband:CFG.deadband, stepT:CFG.stepT, stepFlow:CFG.stepFlow, capPct:CFG.capPct,
+    halfH:0.5, segH:4,
+    meterBeg: (r&&r.cum!==null)? r.cum-700 : 1286000, meterEnd: (r&&r.cum!==null)? r.cum : 1286700,
+    needKW: r? r.needKW : 1300, actualKW: (r&&r.actKW!==null)? r.actKW : 1400,
+    devPct: (r&&r.devPct!==null)? r.devPct : 6, segNeedKWh:5200, segDone:4900, carry:0,
+    leftNeed:300, leftH:2, wantKW:150
+  };
+}
+function testOne(k){
+  var el = document.getElementById('tr_'+k);
+  if(!el) return;
+  try{
+    var v = evalExpr(CFG.formulas[k], testCtx());
+    el.innerHTML = (v===null)? '<span class="bad">结果非数值</span>' : '= '+Math.round(v*1000)/1000;
+  }catch(e){ el.innerHTML = '<span class="bad">'+e.message+'</span>'; }
+}
+function setTab(i){
+  var tabs = document.querySelectorAll('.tab'), pgs = document.querySelectorAll('.pg');
+  Array.prototype.forEach.call(tabs, function(t){ t.classList.toggle('on', Number(t.dataset.tab)===i); });
+  Array.prototype.forEach.call(pgs, function(p){ p.classList.toggle('hidden', Number(p.dataset.pg)!==i); });
+}
+async function loadVarDict(){
+  var hint = document.getElementById('varDictHint');
+  hint.textContent = '正在从 '+SERVERS[CFG.server].name+' 载入变量字典…';
+  try{
+    var rows = await procGet('/vars');
+    VARDICT = rows || [];
+    hint.innerHTML = '已载入 '+VARDICT.length+' 条真实变量（'+SERVERS[CFG.server].name+'）；设备 / 测点输入框可下拉选择。';
+    renderCfgVars(); renderBindStatus();
+  }catch(e){
+    hint.innerHTML = '<span class="bad">载入失败：'+(e&&e.message?e.message:e)+'（检查网络或改用手工填写）</span>';
+  }
+}
+function exportCsv(){
+  if(!MODEL) return;
+  var head = ['时间','实际功率kW','半小时热量kWh','累计表底kWh','炉水温度℃','循环水量m3/h','预报外温℃','需热功率kW','偏差率%','台账建议'];
+  var lines = [head.join(',')];
+  MODEL.ledger.forEach(function(r){
+    lines.push([r.label+'-'+r.endLabel, r.actKW===null?'':r.actKW, r.heat===null?'':r.heat, r.cum===null?'':r.cum,
+      r.tBoiler===null?'':r.tBoiler, r.flow===null?'':r.flow, r.tOut, r.needKW,
+      r.devPct===null?'':Math.round(r.devPct*10)/10, r.adv].join(','));
+  });
+  var blob = new Blob(['\ufeff'+lines.join('\n')], { type:'text/csv;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '智能控制台账_'+MODEL.day+'_'+SERVERS[CFG.server].name+'.csv';
+  a.click();
+}
+function exportCfgFile(){
+  var blob = new Blob([JSON.stringify(CFG,null,2)], { type:'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '智能控制配置_'+CFG.server+'_'+CFG.project+'.json';
+  a.click();
+}
+
+var timer = null;
+function bindCfgLive(){
+  // 配置项即时生效：改动即写 CFG 并存本地、刷新视图；空输入保留原值(不清零关键参数)。
+  var num = function(id, def){ var el=document.getElementById(id); return (el&&el.value!=='')? Number(el.value)||def : def; };
+  var bindNum = function(ids, setter){ ids.forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    el.onchange = function(){ setter(Number(this.value)); saveCfg(); refresh(); };
+  }); };
+  var bindTxt = function(id, setter){ var el=document.getElementById(id); if(!el) return;
+    el.onchange = function(){ setter(this.value); saveCfg(); refresh(); };
+  };
+  bindTxt('cfProj', function(v){ CFG.project = v; });
+  bindTxt('cfWxSrc', function(v){ CFG.weather.source = v; });
+  bindTxt('cfWxUrl', function(v){ CFG.weather.url = v; });
+  bindNum(['cfWxIv'], function(v){ CFG.weather.interval = v||3; });
+  bindNum(['cfArea','cfQ','cfTBase','cfTIn','cfTLimit','cfDead','cfStepT','cfStepF','cfCap','cfRef'], function(){ });
+  var direct = { 'cfArea':'area', 'cfQ':'qTarget', 'cfTBase':'tBase', 'cfTIn':'tIn',
+    'cfTLimit':'tBoilerLimit', 'cfDead':'deadband', 'cfStepT':'stepT', 'cfStepF':'stepFlow',
+    'cfCap':'capPct', 'cfRef':'refreshSec' };
+  Object.keys(direct).forEach(function(id){ var el=document.getElementById(id); if(!el) return;
+    el.onchange = function(){
+      var v = (el.value==='')? Number(CFG[direct[id]])||0 : Number(el.value);
+      CFG[direct[id]] = Number.isFinite(v)? v : CFG[direct[id]];
+      saveCfg(); refresh();
+    };
+  });
+  var elH=document.getElementById('cfWxHourly'); if(elH){
+    elH.onchange = function(){ var txt=elH.value.trim(); if(txt){ var a=txt.split(/[,\s]+/).map(Number).filter(function(x){return !isNaN(x);}); if(a.length>=24){ CFG.weather.hourly=a.slice(0,24); CFG.weather.fetchedAt=fmtISO(new Date()); saveCfg(); refresh(); } } };
+  }
+  var elM=document.getElementById('cfMock'); if(elM){
+    elM.onchange = function(){ CFG.mock = (elM.value==='1'); saveCfg(); refresh(); };
+  }
+  var elS=document.getElementById('cfServer'); if(elS){
+    elS.onchange = function(){ var sv=elS.value; if(sv!==CFG.server){ CFG=loadCfg(sv); document.getElementById('serverSel').value=CFG.server; saveCfg(); refresh(); } };
+  }
+}
+
+function bindUI(){
+  document.getElementById('serverSel').onchange = function(){
+    CFG = loadCfg(this.value);
+    document.getElementById('winSel').value = CFG.winMode;
+    document.getElementById('projInput').value = CFG.project;
+    document.getElementById('btnMock').textContent = '模拟数据：'+(CFG.mock?'开':'关');
+    refresh();
+  };
+  document.getElementById('winSel').onchange = function(){ CFG.winMode = this.value; saveCfg(); refresh(); };
+  document.getElementById('daySel').onchange = function(){ refresh(); };
+  document.getElementById('projInput').onchange = function(){ CFG.project = this.value; saveCfg(); };
+  document.getElementById('btnRefresh').onclick = function(){ refresh(); };
+  document.getElementById('btnCfg').onclick = function(){ openCfg(); };
+  document.getElementById('btnMock').onclick = function(){
+    CFG.mock = !CFG.mock; saveCfg();
+    this.textContent = '模拟数据：'+(CFG.mock?'开':'关');
+    refresh();
+  };
+  document.getElementById('btnReplay').onclick = function(){
+    REPLAY = !REPLAY;
+    if(REPLAY && WALK.on){ WALK.on=false; document.getElementById('btnWalk').textContent='走查模式：关'; document.getElementById('walkPanel').classList.add('hidden'); }
+    this.textContent = '真实回放：'+(REPLAY?'开':'关');
+    document.getElementById('daySel').value = REPLAY? REPLAY_DAY : ymd(curWorkDayStart());
+    if(!REPLAY){ document.getElementById('btnMock').textContent = '模拟数据：'+(CFG.mock?'开':'关'); }
+    refresh();
+  };
+  document.getElementById('btnWalk').onclick = function(){
+    WALK.on = !WALK.on;
+    this.textContent = '走查模式：'+(WALK.on?'开':'关');
+    document.getElementById('walkPanel').classList.toggle('hidden', !WALK.on);
+    if(WALK.on){
+      if(REPLAY){ REPLAY=false; document.getElementById('btnReplay').textContent='真实回放：关'; }
+      if(!WALK.meter.length || WALK.meter[0]===null){ WALK.meter=[null]; WALK.count=0; WALK.idx=0; }
+      updateWalkPanel();
+      document.getElementById('daySel').value = ymd(curWorkDayStart());
+    }
+    refresh();
+  };
+  document.getElementById('btnWalkGo').onclick = function(){ walkRecord(); };
+  document.getElementById('btnWalkBack').onclick = function(){ walkBack(); };
+  document.getElementById('btnWalkReset').onclick = function(){ walkReset(); };
+  document.getElementById('walkInp').addEventListener('keydown', function(e){ if(e.key==='Enter') walkRecord(); });
+  document.getElementById('btnCloseCfg').onclick = function(){ document.getElementById('cfgMask').classList.add('hidden'); };
+  document.getElementById('cfgMask').onclick = function(e){ if(e.target===this) this.classList.add('hidden'); };
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(t){
+    t.onclick = function(){ setTab(Number(this.dataset.tab)); };
+  });
+  bindCfgLive();
+
+  document.getElementById('btnLoadVars').onclick = function(){ loadVarDict(); };
+  document.getElementById('btnTestAll').onclick = function(){ FML_DEF.forEach(function(f){ testOne(f.k); }); };
+  document.getElementById('btnCsv').onclick = exportCsv;
+  document.getElementById('btnExport').onclick = exportCfgFile;
+  document.getElementById('btnImport').onclick = function(){ document.getElementById('fileImport').click(); };
+  document.getElementById('fileImport').onchange = function(e){
+    var f = e.target.files[0];
+    if(!f) return;
+    var rd = new FileReader();
+    rd.onload = function(){
+      try{
+        CFG = mergeCfg(defCfg(), JSON.parse(rd.result)); saveCfg();
+        document.getElementById('cfgMsg').textContent = '已导入配置';
+        openCfg(); refresh();
+      }catch(err){ document.getElementById('cfgMsg').textContent = '导入失败：'+err.message; }
+    };
+    rd.readAsText(f);
+  };
+  document.getElementById('btnReset').onclick = function(){
+    if(!confirm('恢复当前数据源的默认配置？')) return;
+    var sv = CFG.server;
+    CFG = defCfg(); CFG.server = sv; saveCfg();
+    openCfg(); refresh();
+  };
+  var addBtn=document.getElementById('btnAddKpi');
+  if(addBtn) addBtn.onclick = function(){
+    if(!CFG.kpis) CFG.kpis=[];
+    CFG.kpis.push({ label:'新KPI卡', unit:'', badge:'', bc:'', src:'var', key:'', var:'tboiler', val:'' });
+    renderCfgKpis(); saveCfg();
+  };
+  window.addEventListener('resize', function(){ if(CHART) CHART.resize(); if(SCCHART) SCCHART.resize(); if(SCCHART2) SCCHART2.resize(); if(WXCHART) WXCHART.resize(); });
+}
+// ==== 走查模式：手动录入表底验证结算 ====
+function walkClockStr(){
+  var D0 = (MODEL && MODEL.D0) ? MODEL.D0 : curWorkDayStart();
+  var t = addMin(D0, WALK.idx*30);
+  return hm(t);
+}
+function updateWalkPanel(){
+  var slotEl = document.getElementById('walkSlot');
+  var clockEl = document.getElementById('walkClock');
+  var hintEl = document.getElementById('walkHint');
+  if(slotEl) slotEl.textContent = walkClockStr()+(WALK.idx>0? '（录入后推至 '+(function(){ var t=addMin(MODEL&&MODEL.D0?MODEL.D0:curWorkDayStart(),WALK.idx*30); return hm(t); })()+'）':'');
+  if(clockEl) clockEl.textContent = WALK.idx>0? '已录入 '+WALK.count+' 个时刻点，当前推进到 '+walkClockStr() : '尚未录入（从 09:00 开始）';
+  if(hintEl) hintEl.textContent = '录入第 '+(WALK.idx+1)+' 个表底读数（'+walkClockStr()+' 时刻）→ 相邻两次差=该半小时供热量';
+}
+function walkRecord(){
+  var inp = document.getElementById('walkInp');
+  var v = inp? Number(inp.value) : NaN;
+  if(isNaN(v)){ if(document.getElementById('walkHint')) document.getElementById('walkHint').textContent='请输入有效表底读数'; return; }
+  // 确保可写位置
+  while(WALK.meter.length <= WALK.idx) WALK.meter.push(null);
+  WALK.meter[WALK.idx] = v;
+  WALK.idx++;
+  WALK.count = WALK.meter.filter(function(x){ return x!==null && x!==undefined; }).length;
+  if(inp) inp.value='';
+  updateWalkPanel();
+  refresh();
+}
+function walkBack(){
+  if(WALK.idx<=0){ return; }
+  while(WALK.meter.length <= WALK.idx) WALK.meter.push(null);
+  WALK.meter[WALK.idx] = null;   // 清掉当前位的录入（回退）
+  WALK.idx--;
+  WALK.count = WALK.meter.filter(function(x){ return x!==null && x!==undefined; }).length;
+  updateWalkPanel();
+  refresh();
+}
+function walkReset(){
+  WALK.meter = [null]; WALK.idx = 0; WALK.count = 0;
+  var inp = document.getElementById('walkInp'); if(inp) inp.value='';
+  updateWalkPanel();
+  refresh();
+}
+
+var _lastSegKey = null;   // 上次刷新的时段标记（段号），用于检测时段边界
+var _lastWxAt = '';      // 上次成功拉取预报的时间戳，用于按间隔定时（与热量表/真实取数解耦）
+async function refresh(){
+  // ---- 天气预报独立拉取：按时间间隔(interval)定时，与热量表/真实取数解耦 ----
+  // 只要距上次成功拉取超过 interval（默认3h，或首载/时段边界），就单独拉一次；
+  // 真实取数(热量表)是否成功、是否延迟，都不再影响天气更新。
+  var wxDue = false;
+  try{
+    if(!REPLAY && CFG && CFG.weather && CFG.weather.source==='url'
+       && CFG.weather.url && (typeof fetch==='function')){
+      var _iv = Math.max(1, Math.round((CFG.weather.interval||3)*3600*1000));
+      var _lastTs = _lastWxAt? (new Date(_lastWxAt.replace(' ','T')).getTime()||0) : 0;
+      if(!_lastTs || (Date.now() - _lastTs) >= _iv) wxDue = true;   // 定时到期即拉
+    }
+  }catch(e){}
+  // ---- 结算（真实取数独立 try，失败不影响天气） ----
+  try{ await buildModel(); }catch(e){}
+  var curSegK = (MODEL && MODEL.curSeg)? MODEL.curSeg.k : null;
+  // 时段边界（首载或段切换）也触发一次预报
+  if(!REPLAY && CFG && CFG.weather && CFG.weather.source==='url'
+     && CFG.weather.url
+     && (curSegK && _lastSegKey && curSegK!==_lastSegKey)) wxDue = true;
+  if(wxDue){
+    try{
+      var _ok = await fetchWeather();          // 拉最新预报并写 CFG.weather.hourly
+      if(_ok) _lastWxAt = CFG.weather.fetchedAt;
+    }catch(e){}
+    if(CFG.weather.fetchedAt) _lastWxAt = CFG.weather.fetchedAt;
+  }
+  try{
+    if(wxDue && CFG.weather.hourly && CFG.weather.hourly.length===24) await buildModel(); // 新预报重算
+    saveCfg();
+    render();
+  }catch(e){
+    document.getElementById('chartHint').innerHTML = '<span class="bad">计算/取数异常：'+(e&&e.message?e.message:e)+'</span>';
+  }
+  _lastSegKey = (MODEL && MODEL.curSeg)? MODEL.curSeg.k : _lastSegKey;
+  if(timer) clearInterval(timer);
+  timer = setInterval(refresh, Math.max(15, (CFG&&CFG.refreshSec)||60)*1000);
+}
+
+(function init(){
+  document.getElementById('daySel').value = ymd(curWorkDayStart());
+  CFG = loadCfg('test');
+  document.getElementById('serverSel').value = CFG.server;
+  document.getElementById('winSel').value = CFG.winMode;
+  document.getElementById('projInput').value = CFG.project;
+  document.getElementById('btnMock').textContent = '模拟数据：'+(CFG.mock?'开':'关');
+  bindUI();
+  if(!window.echarts){
+    var t = setInterval(function(){ if(window.echarts){ clearInterval(t); refresh(); } }, 400);
+  }
+  refresh();
+})();
+</script>
+</body>
+</html>
