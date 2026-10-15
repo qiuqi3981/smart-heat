@@ -13,9 +13,10 @@
 }
 html,body{position:relative;min-height:100%;color:var(--txt);
   background:
-    radial-gradient(1200px 600px at 12% -8%,rgba(0,162,154,.05),transparent 60%),
-    radial-gradient(900px 500px at 88% 0%,rgba(0,162,154,.035),transparent 60%),
-    linear-gradient(180deg,var(--bg),#070b0a 70%);
+    radial-gradient(1200px 600px at 12% -8%,rgba(0,162,154,.12),transparent 60%),
+    radial-gradient(900px 500px at 88% 0%,rgba(0,162,154,.08),transparent 60%),
+    radial-gradient(700px 400px at 50% 30%,rgba(0,162,154,.05),transparent 65%),
+    linear-gradient(180deg,var(--bg),#060a09 75%);
   font:13px/1.55 -apple-system,"PingFang SC","Microsoft YaHei",Inter,Arial,sans-serif}
 /* 平台驾驶舱底色装饰：网格线+圆点（对齐 CockpitHeating 氛围） */
 body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
@@ -54,7 +55,7 @@ input[type=text],input[type=number],input[type=date]{border-bottom:1px dashed rg
 .tag.ro{color:#9fd0ff;border-color:rgba(74,144,226,.4);background:rgba(74,144,226,.10)}
 .tag.err{color:#ffb0b0;border-color:rgba(255,107,107,.45);background:rgba(255,107,107,.12)}
 main{padding-top:14px}
-.card{background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:20px;padding:15px 17px;margin-bottom:13px;box-shadow:0 12px 40px rgba(0,0,0,.30);transition:all .3s}
+.card{background:linear-gradient(165deg,rgba(255,255,255,.035),rgba(255,255,255,.012) 55%);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(0,162,154,.10);border-radius:20px;padding:15px 17px;margin-bottom:13px;box-shadow:0 12px 40px rgba(0,0,0,.35);transition:all .3s}
 .card:hover{border-color:rgba(0,162,154,.14);box-shadow:0 0 40px rgba(0,162,154,.04)}
 .ch{display:flex;align-items:center;gap:9px;margin-bottom:10px;flex-wrap:wrap}
 .ch::before{content:"";width:4px;height:18px;background:#00A29A;border-radius:3px;flex:none}
@@ -63,10 +64,10 @@ main{padding-top:14px}
 .ch .right{margin-left:auto;display:flex;gap:8px;align-items:center}
 .hint{color:var(--dim2);font-size:11.5px}
 .params{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:9px}
-.p{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:8px 10px;transition:all .2s}
-.p:hover{border-color:rgba(0,162,154,.12);box-shadow:0 0 20px rgba(0,162,154,.03)}
+.p{background:linear-gradient(160deg,rgba(0,162,154,.07),rgba(255,255,255,.02) 60%);border:1px solid rgba(0,162,154,.18);border-radius:14px;padding:10px 12px;transition:all .25s;box-shadow:inset 0 0 18px rgba(0,162,154,.04)}
+.p:hover{border-color:rgba(0,162,154,.35);box-shadow:inset 0 0 22px rgba(0,162,154,.08),0 0 24px rgba(0,162,154,.10)}
 .p .k{color:var(--dim2);font-size:11.5px;display:flex;gap:5px;align-items:center}
-.p .v{font-size:17px;font-weight:600;color:#eaf6ff;margin-top:2px;font-variant-numeric:tabular-nums}
+.p .v{font-size:17px;font-weight:600;color:#f2fbff;margin-top:2px;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(0,162,154,.25)}
 .p .v small{font-size:11.5px;color:var(--dim);font-weight:400;margin-left:3px}
 .p.hot .v{color:#ffb3b3}
 .p.ok .v{color:#7fe6dd}
@@ -387,7 +388,7 @@ details ol{margin:9px 0 0 20px;color:var(--dim);font-size:12.5px;line-height:1.8
 "use strict";
 /* 智能控制管理中心（供热子驾驶舱 · 独立页试运行）
    口径：运营日 09:00 起算；5 段；半小时节拍；全额结转；只读文字建议 */
-var VERSION = 'v0.12.1-20261015-1410';
+var VERSION = 'v0.12.2-20261015-1416';
 // ===== Excel 真实回放数据（2025-12-24 运营日 09:00 起，老大提供 44h 模拟台账） =====
 // 24 个整点逐时外温（09:00~次日08:00）
 var REPLAY_HOURLY = [-7,-5.3,-2.2,2.6,3.2,0.4,0.8,1,0.5,-0.4,-1.1,-1.6,-2.6,-3.1,-4.8,-5.5,-6,-6.4,-6.6,-6.8,-8,-8.5,-8.6,-9];
@@ -870,15 +871,12 @@ async function buildModel(){
     list.forEach(function(r){ if(r.ok){ doneKWh += r.heat; okN++; } });
     var status = 'wait';
     var gOff = segOffsetOf(segs, g);
+    // 段状态严格按时间定位：当前时刻落在哪段就是 cur，不因数据缺失而反转。
     if(isPast) status = 'done';
-    else if(prevSegCur){ status = 'wait'; }
     else if(curIdx >= gOff && curIdx < gOff + sg.slots) status = 'cur';
-    else if(curIdx >= gOff + sg.slots){
-      // 段末已到：等该段最后一个半小时的热量表(末槽)到位才切 done，
-      // 避免热量表延迟上报导致用不准的底数结算新时段。末槽 ok(表底齐全)才允许切段。
-      var lastR = list[sg.slots-1];
-      status = (lastR && lastR.ok) ? 'done' : 'cur';
-    }
+    else if(curIdx >= gOff + sg.slots) status = 'done';
+    // 热量表延迟/未绑定只影响台账是否缺数(另计 missing)，不改变段的进行/完成属性。
+    // 若等末槽到位再切段，未绑定测点时末槽永远缺，会把当前时段永远卡在前段。
     // 本段用于展示的结转：REPLAY 每段都带(逐段滚)；真实/走查 仅当前(cur)段带累计结转，done/wait 用净需热
     var carryIn = (REPLAY)? carry : ((status==='cur')? carry : 0);
     var segNeedKWh = netKWh + carryIn;                // 时段需热总量（展示口径）
