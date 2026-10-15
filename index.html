@@ -382,9 +382,9 @@ details ol{margin:9px 0 0 20px;color:var(--dim);font-size:12.5px;line-height:1.8
     </div>      </div>
     </div>
     <div class="df">
-      <button class="btn" id="btnImport">导入配置</button>
+      <button class="btn" id="btnImport" data-cfgmod="local">导入配置</button>
       <button class="btn" id="btnExport">导出配置 JSON</button>
-      <button class="btn" id="btnReset">恢复默认</button>
+      <button class="btn" id="btnReset" data-cfgmod="local">恢复默认</button>
       <div style="margin-left:auto"></div>
       <span class="hint" id="cfgMsg"></span>
     </div>
@@ -397,7 +397,7 @@ details ol{margin:9px 0 0 20px;color:var(--dim);font-size:12.5px;line-height:1.8
 "use strict";
 /* 智能控制管理中心（供热子驾驶舱 · 独立页试运行）
    口径：运营日 09:00 起算；5 段；半小时节拍；全额结转；只读文字建议 */
-var VERSION = 'v0.13.0-20261015-1618';
+var VERSION = 'v0.13.1-20261015-1635';
 // ===== Excel 真实回放数据（2025-12-24 运营日 09:00 起，老大提供 44h 模拟台账） =====
 // 24 个整点逐时外温（09:00~次日08:00）
 var REPLAY_HOURLY = [-7,-5.3,-2.2,2.6,3.2,0.4,0.8,1,0.5,-0.4,-1.1,-1.6,-2.6,-3.1,-4.8,-5.5,-6,-6.4,-6.6,-6.8,-8,-8.5,-8.6,-9];
@@ -2041,6 +2041,11 @@ async function refresh(){
   document.getElementById('winSel').value = CFG.winMode;
   document.getElementById('projInput').value = CFG.project;
   bindUI();
+  // 平台内嵌模式（?project_id=）：配置来源于平台报文，隐藏本地「导入/恢复默认」防误覆盖
+  if(URL_PROJECT_ID){
+    var _m=document.querySelectorAll('[data-cfgmod="local"]');
+    for(var i=0;i<_m.length;i++){ _m[i].style.display='none'; }
+  }
   function readyThenRefresh(){
     if(!window.echarts){
       var t = setInterval(function(){ if(window.echarts){ clearInterval(t); refresh(); } }, 400);
